@@ -57,29 +57,18 @@ ol,
 ul {
   list-style: none;
 }
-body {
-  background-color: #dadada;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
 .keyboard {
   display: flex;
-  justify-content: center;
-  align-items: stretch;
-  border: 2px solid #333333;
-  border-radius: 10px;
-  width: 80%;
-  margin-top: 100px;
-  background-color: #d0644d;
+  flex-direction: column;
+  width: 94%;
+  height: 500px;
 }
 .keys {
-  width: 94%;
-  margin-top: 50px;
+  position: relative;
+  width: 100%;
 }
 .white-keys {
   position: relative;
-  height: 375px;
   display: flex;
   align-items: stretch;
   z-index: 2;
@@ -91,8 +80,6 @@ body {
 }
 .black-keys {
   position: relative;
-  top: 250px;
-  height: 250px;
   display: flex;
   align-items: stretch;
 }
@@ -102,7 +89,7 @@ body {
   width: 4.445%;
   z-index: 3;
 }
-.black-key-margin {
+.half-step-margin {
   margin-left: 2.222%;
 }
 .shift-left {
@@ -110,4 +97,49 @@ body {
 }
 .whole-step-margin {
   margin-left: 8.889%;
+}
+.white-25 {
+  height: 300px;
+}
+.black-25 {
+  height: 198px;
+  top: 198px;
+}
+.white-49 {
+  height: 150px;
+}
+.black-49 {
+  height: 99px;
+  top: 99px;
+}
+.white-73 {
+  height: 99px;
+}
+.black-73 {
+  height: 66px;
+  top: 66px;
+}
+.shift-down-49 {
+  top: 99px;
+}
+.shift-down-73-2 {
+  top: 66px;
+}
+.shift-down-73-3 {
+  top: 132px;
+}
+body {
+  background-color: #dadada;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.synth {
+  display: flex;
+  justify-content: center;
+  border: 2px solid #333333;
+  border-radius: 10px;
+  width: 80%;
+  margin-top: 100px;
+  background-color: #d0644d;
 }

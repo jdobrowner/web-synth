@@ -1,0 +1,102 @@
+@white: #fefefe;
+@black: #333333;
+@red: #d0644d;
+@keyboard-height: 300px;
+
+.border() {
+  border: 2px solid @black;
+}
+
+.test-border-1() {
+  border: 2px dashed green;
+}
+.test-border-2() {
+  border: 2px dashed purple;
+}
+
+.keyboard {
+  display: flex;
+  flex-direction: column;
+  width: 94%;
+  height: 500px;
+}
+
+.keys {
+  position: relative;
+  width: 100%;
+}
+
+.white-keys {
+  position: relative;
+  display: flex;
+  align-items: stretch;
+  z-index: 2;
+  div {
+    background-color: @white;
+    .border;
+    flex: 1 0 6.667%;
+  }
+}
+
+.black-keys {
+  position: relative;
+  display: flex;
+  align-items: stretch;
+  div {
+    background-color: @black;
+    .border;
+    width: 4.445%;
+    z-index: 3;
+  }
+}
+
+.half-step-margin {
+  margin-left: 2.222%;
+}
+
+.shift-left {
+  margin-left: 4.445%;
+}
+
+.whole-step-margin {
+  margin-left: 8.889%;
+}
+
+.white-25 {
+  height: @keyboard-height;
+}
+
+.black-25 {
+  height: @keyboard-height * 0.66;
+  top: @keyboard-height * 0.66;
+}
+
+.white-49 {
+  height: @keyboard-height * 0.5;
+}
+
+.black-49 {
+  height: @keyboard-height * 0.33;
+  top: @keyboard-height * 0.33;
+}
+
+.white-73 {
+  height: @keyboard-height * 0.33;
+}
+
+.black-73 {
+  height: @keyboard-height * 0.22;
+  top: @keyboard-height * 0.22;
+}
+
+.shift-down-49 {
+  top: @keyboard-height * 0.33;
+}
+
+.shift-down-73-2 {
+  top: @keyboard-height * 0.22;
+}
+
+.shift-down-73-3 {
+  top: @keyboard-height * 0.44;
+}
