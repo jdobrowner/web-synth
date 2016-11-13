@@ -1,0 +1,42 @@
+@white: #fefefe;
+@black: #333333;
+
+.border() {
+  border: 2px solid @black;
+}
+
+.test-border-1() {
+  border: 2px dashed green;
+}
+.test-border-2() {
+  border: 2px dashed purple;
+}
+
+header {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  div {
+    text-align: center;
+    width: 225px;
+    display: flex;
+    flex-direction: column;
+    div {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+    }
+  }
+}
+
+.choice-box {
+  padding-left: 10px;
+  line-height: 36px;
+  width: 40px;
+  height: 40px;
+  .border;
+}
+
+.clicked {
+  background-color: @white;
+}

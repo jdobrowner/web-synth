@@ -91,6 +91,32 @@
 	  (0, _jquery2.default)('.row2').addClass('shift-down-73-2');
 	}
 
+	(0, _jquery2.default)('.keyboard-display').on('click', '.choice-box', function (e) {
+	  (0, _jquery2.default)('.keyboard-display').find('.choice-box').removeClass('clicked');
+	  (0, _jquery2.default)(this).addClass('clicked');
+	  var num = (0, _jquery2.default)(this).text();
+	  if (num == '25') keyboard25();
+	  if (num == '49') keyboard49();
+	  if (num == '73') keyboard73();
+	});
+
+	(function keyListeners() {
+	  var notes = ['A', 'As', 'B', 'C', 'Cs', 'D', 'Ds', 'E', 'F', 'Fs', 'G', 'Gs'];
+	  for (var i = 0; i < 12; i++) {
+	    keyListener(notes[i]);
+	  }
+	})();
+
+	function keyListener(note) {
+	  var key = (0, _jquery2.default)('.keyboard');
+	  keyboard.on('mousedown', '.' + note, function () {
+	    key = (0, _jquery2.default)(this);
+	    key.addClass(note + '-color');
+	  }).on('mouseup mouseout', function () {
+	    key.removeClass(note + '-color');
+	  });
+	}
+
 /***/ },
 /* 1 */
 /***/ function(module, exports, __webpack_require__) {

@@ -36,3 +36,27 @@ function keyboard73() {
   $('.row3').addClass('shift-down-73-3');
   $('.row2').addClass('shift-down-73-2');
 }
+
+$('.keyboard-display').on('click', '.choice-box', function(e) {
+  $('.keyboard-display').find('.choice-box').removeClass('clicked');
+  $(this).addClass('clicked');
+  let num = $(this).text();
+  if (num == '25') keyboard25();
+  if (num == '49') keyboard49();
+  if (num == '73') keyboard73();
+});
+
+(function keyListeners() {
+  var notes = ['A', 'As', 'B', 'C', 'Cs', 'D', 'Ds', 'E', 'F', 'Fs', 'G', 'Gs'];
+  for (var i = 0; i < 12; i++) {
+    keyListener(notes[i]);
+  }
+})();
+
+function keyListener(note) {
+  var key = $('.keyboard');
+  keyboard.on('mousedown', '.' + note, function() {
+    key = $(this);
+    key.addClass(note + '-color');
+    }).on('mouseup mouseout', function() { key.removeClass(note + '-color'); });
+}

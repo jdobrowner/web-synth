@@ -1,7 +1,21 @@
 @white: #fefefe;
 @black: #333333;
-@red: #d0644d;
+//@red: #d0644d;
 @keyboard-height: 300px;
+
+@green: #35b94f;
+@blue-green: #3db688;
+@blue: #35a3cb;
+@blue-purple: #4671cf;
+@purple: #6f54c6;
+@red-purple: #c55289;
+@red: #cc3e3d;
+@red-orange: #d05145;
+@orange: #c55d34;
+@yellow-orange: #c97e33;
+@yellow: #ccab37;
+@yellow-green: #a0c144;
+
 
 .border() {
   border: 2px solid @black;
@@ -47,6 +61,8 @@
     .border;
     width: 4.445%;
     z-index: 3;
+    border-bottom-left-radius: 4px;
+    border-bottom-right-radius: 4px;
   }
 }
 
@@ -81,7 +97,7 @@
 }
 
 .white-73 {
-  height: @keyboard-height * 0.33;
+  height: @keyboard-height * 0.3333;
 }
 
 .black-73 {
@@ -99,4 +115,22 @@
 
 .shift-down-73-3 {
   top: @keyboard-height * 0.44;
+}
+
+.white-keys {
+  .A-color { background-color: @yellow-orange; }
+  .B-color { background-color: @yellow-green; }
+  .C-color { background-color: @green; }
+  .D-color { background-color: @blue; }
+  .E-color { background-color: @purple; }
+  .F-color { background-color: @red-purple; }
+  .G-color { background-color: @red-orange; }
+}
+
+.black-keys {
+  .As-color { background-color: @yellow; }
+  .Cs-color { background-color: @blue-green; }
+  .Ds-color { background-color: @blue-purple; }
+  .Fs-color { background-color: @red; }
+  .Gs-color { background-color: @orange; }
 }
