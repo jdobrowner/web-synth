@@ -46,79 +46,152 @@
 
 	'use strict';
 
-	var _jquery = __webpack_require__(1);
+	var _midi = __webpack_require__(1);
+
+	var midi = _interopRequireWildcard(_midi);
+
+	var _keyboards = __webpack_require__(4);
+
+	var keyboard = _interopRequireWildcard(_keyboards);
+
+	var _jquery = __webpack_require__(2);
 
 	var _jquery2 = _interopRequireDefault(_jquery);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	var midi = __webpack_require__(2);
-	// import * as midi from 'midi';
+	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
-	// import * as keys from './keyboards.js';
-
-	var keys = __webpack_require__(4);
-	//var $ = require("jquery");
-
-
-	var keyboard = (0, _jquery2.default)('.keyboard');
-	keyboard25();
-
-	function keyboard25() {
-	  keyboard.children().remove();
-	  keyboard.append(keys.row1);
-	  (0, _jquery2.default)('.white-keys').addClass('white-25');
-	  (0, _jquery2.default)('.black-keys').addClass('black-25');
-	}
-
-	function keyboard49() {
-	  keyboard.children().remove();
-	  keyboard.append(keys.row2);
-	  keyboard.append(keys.row1);
-	  (0, _jquery2.default)('.white-keys').addClass('white-49');
-	  (0, _jquery2.default)('.black-keys').addClass('black-49');
-	  (0, _jquery2.default)('.row2').addClass('shift-down-49');
-	}
-
-	function keyboard73() {
-	  keyboard.children().remove();
-	  keyboard.append(keys.row3);
-	  keyboard.append(keys.row2);
-	  keyboard.append(keys.row1);
-	  (0, _jquery2.default)('.white-keys').addClass('white-73');
-	  (0, _jquery2.default)('.black-keys').addClass('black-73');
-	  (0, _jquery2.default)('.row3').addClass('shift-down-73-3');
-	  (0, _jquery2.default)('.row2').addClass('shift-down-73-2');
-	}
-
-	(0, _jquery2.default)('.keyboard-display').on('click', '.choice-box', function (e) {
-	  (0, _jquery2.default)('.keyboard-display').find('.choice-box').removeClass('clicked');
-	  (0, _jquery2.default)(this).addClass('clicked');
-	  var num = (0, _jquery2.default)(this).text();
-	  if (num == '25') keyboard25();
-	  if (num == '49') keyboard49();
-	  if (num == '73') keyboard73();
-	});
-
-	(function keyListeners() {
-	  var notes = ['A', 'As', 'B', 'C', 'Cs', 'D', 'Ds', 'E', 'F', 'Fs', 'G', 'Gs'];
-	  for (var i = 0; i < 12; i++) {
-	    keyListener(notes[i]);
-	  }
-	})();
-
-	function keyListener(note) {
-	  var key = (0, _jquery2.default)('.keyboard');
-	  keyboard.on('mousedown', '.' + note, function () {
-	    key = (0, _jquery2.default)(this);
-	    key.addClass(note + '-color');
-	  }).on('mouseup mouseout', function () {
-	    key.removeClass(note + '-color');
-	  });
-	}
+	keyboard.build();
+	midi.init();
 
 /***/ },
 /* 1 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+
+	var _jquery = __webpack_require__(2);
+
+	var _jquery2 = _interopRequireDefault(_jquery);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function midiInit() {
+
+	  var WebMidi = __webpack_require__(3);
+	  var input;
+
+	  (function loadMidiDevice() {
+	    WebMidi.enable(function (err) {
+	      if (err) {
+	        console.log("WebMidi could not be enabled.", err);
+	      } else {
+	        console.log("WebMidi enabled!");
+	        input = WebMidi.inputs[0];
+	        if (typeof input !== 'undefined') addListeners(input);else (0, _jquery2.default)('.keyboard-input-name').text('No Input Device Found');
+	      }
+	    });
+	  })();
+	  // module.exports.loadDevice = loadMidiDevice;
+	}
+
+	function addListeners(input) {
+	  console.log(input);
+	  console.log(input._midiInput.name);
+	  (0, _jquery2.default)('.keyboard-input-name').text(input._midiInput.name);
+
+	  input.addListener('noteon', "all", function (e) {
+	    var note = matchingKeyID(e.note.name, e.note.octave);
+	    var $key = (0, _jquery2.default)('.' + note.id);
+	    $key.addClass(note.letter + '-color');
+	  });
+	  input.addListener('noteoff', "all", function (e) {
+	    var note = matchingKeyID(e.note.name, e.note.octave);
+	    var $key = (0, _jquery2.default)('.' + note.id);
+	    $key.removeClass(note.letter + '-color');
+	  });
+	  // input.addListener('controlchange', "all", function (e) {
+	  //     console.log("Received 'controlchange' message.", e);
+	  //   }
+	  // );
+	}
+
+	//--------- match key on midi keyboard to the on screen keyboard keys ---------
+
+	function matchingKeyID(pitch, octave) {
+	  var baseNumber = getBaseNumberFromLetter(pitch);
+	  var id = baseNumber + 12 * (octave + 4);
+	  var letter = getLetterFromBaseNumber(baseNumber);
+	  return { id: id, letter: letter };
+	}
+
+	function getBaseNumberFromLetter(pitch) {
+	  switch (pitch) {
+	    case 'C':
+	      return 1;
+	    case 'C#':
+	      return 2;
+	    case 'D':
+	      return 3;
+	    case 'D#':
+	      return 4;
+	    case 'E':
+	      return 5;
+	    case 'F':
+	      return 6;
+	    case 'F#':
+	      return 7;
+	    case 'G':
+	      return 8;
+	    case 'G#':
+	      return 9;
+	    case 'A':
+	      return 10;
+	    case 'A#':
+	      return 11;
+	    case 'B':
+	      return 12;
+	    default:
+	      return;
+	  }
+	}
+
+	function getLetterFromBaseNumber(n) {
+	  switch (n) {
+	    case 1:
+	      return 'C';
+	    case 2:
+	      return 'Cs';
+	    case 3:
+	      return 'D';
+	    case 4:
+	      return 'Ds';
+	    case 5:
+	      return 'E';
+	    case 6:
+	      return 'F';
+	    case 7:
+	      return 'Fs';
+	    case 8:
+	      return 'G';
+	    case 9:
+	      return 'Gs';
+	    case 10:
+	      return 'A';
+	    case 11:
+	      return 'As';
+	    case 12:
+	      return 'B';
+	    default:
+	      return;
+	  }
+	}
+
+	module.exports.init = midiInit;
+
+/***/ },
+/* 2 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
@@ -10344,40 +10417,6 @@
 
 
 /***/ },
-/* 2 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-
-	(function () {
-	  var WebMidi = __webpack_require__(3);
-
-	  var input;
-
-	  (function loadMidiDevice() {
-	    WebMidi.enable(function (err) {
-	      if (err) {
-	        console.log("WebMidi could not be enabled.", err);
-	      } else {
-	        console.log("WebMidi enabled!");
-	        input = WebMidi.inputs[0];
-	        if (typeof input !== 'undefined') addListeners(input);
-	      }
-	    });
-	  })();
-
-	  function addListeners(input) {
-	    console.log(input);
-	    input.addListener('noteon', "all", function (e) {
-	      console.log("Received 'noteon' message (" + e.note.name + e.note.octave + ").");
-	    });
-	    input.addListener('controlchange', "all", function (e) {
-	      console.log("Received 'controlchange' message.", e);
-	    });
-	  }
-	})();
-
-/***/ },
 /* 3 */
 /***/ function(module, exports, __webpack_require__) {
 
@@ -10415,14 +10454,21 @@
 
 /***/ },
 /* 4 */
-/***/ function(module, exports) {
+/***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	(function () {
+	var _jquery = __webpack_require__(2);
+
+	var _jquery2 = _interopRequireDefault(_jquery);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	//--------------------- set up the html for the keyboard ----------------------
+
+	function keyboardHTML() {
 
 	  var CLASS = '<div class="',
-	      ID = '" id="',
 	      END = '"></div>',
 	      CLOSE = '</div>';
 	  var KEYS = '<div class="keys',
@@ -10433,58 +10479,58 @@
 	  var blackKeyNums = [2, 4, 7, 9, 11, 14, 16, 19, 21, 23];
 
 	  var whiteKeys25 = whiteKeyNums.map(function (n) {
-	    return CLASS + getLetter(n) + ID + n + END;
+	    return CLASS + getLetter(n) + n + END;
 	  }).join('');
 	  var blackKeys25 = blackKeyNums.map(function (n) {
-	    return CLASS + getLetter(n) + spacing(n) + ID + n + END;
+	    return CLASS + getLetter(n) + spacing(n) + n + END;
 	  }).join('');
 	  var whiteKeys49 = whiteKeyNums.map(function (n) {
-	    return CLASS + getLetter(n) + ID + (n + 24) + END;
+	    return CLASS + getLetter(n) + (n + 24) + END;
 	  }).join('');
 	  var blackKeys49 = blackKeyNums.map(function (n) {
-	    return CLASS + getLetter(n) + spacing(n) + ID + (n + 24) + END;
+	    return CLASS + getLetter(n) + spacing(n) + (n + 24) + END;
 	  }).join('');
 	  var whiteKeys73 = whiteKeyNums.map(function (n) {
-	    return CLASS + getLetter(n) + ID + (n + 48) + END;
+	    return CLASS + getLetter(n) + (n + 48) + END;
 	  }).join('');
 	  var blackKeys73 = blackKeyNums.map(function (n) {
-	    return CLASS + getLetter(n) + spacing(n) + ID + (n + 48) + END;
+	    return CLASS + getLetter(n) + spacing(n) + (n + 48) + END;
 	  }).join('');
 
 	  var row1 = KEYS + ' row1">' + BLACK + blackKeys25 + CLOSE + WHITE + whiteKeys25 + CLOSE + CLOSE;
 	  var row2 = KEYS + ' row2">' + BLACK + blackKeys49 + CLOSE + WHITE + whiteKeys49 + CLOSE + CLOSE;
 	  var row3 = KEYS + ' row3">' + BLACK + blackKeys73 + CLOSE + WHITE + whiteKeys73 + CLOSE + CLOSE;
 
-	  module.exports = { row1: row1, row2: row2, row3: row3 };
-	})();
+	  return { row1: row1, row2: row2, row3: row3 };
+	}
 
 	function getLetter(n) {
 	  var m = n % 12;
 	  switch (m) {
 	    case 1:
-	      return 'C';
+	      return 'C ';
 	    case 2:
-	      return 'Cs';
+	      return 'Cs ';
 	    case 3:
-	      return 'D';
+	      return 'D ';
 	    case 4:
-	      return 'Ds';
+	      return 'Ds ';
 	    case 5:
-	      return 'E';
+	      return 'E ';
 	    case 6:
-	      return 'F';
+	      return 'F ';
 	    case 7:
-	      return 'Fs';
+	      return 'Fs ';
 	    case 8:
-	      return 'G';
+	      return 'G ';
 	    case 9:
-	      return 'Gs';
+	      return 'Gs ';
 	    case 10:
-	      return 'A';
+	      return 'A ';
 	    case 11:
-	      return 'As';
+	      return 'As ';
 	    case 0:
-	      return 'B';
+	      return 'B ';
 	    default:
 	      return;
 	  }
@@ -10493,10 +10539,75 @@
 	function spacing(n) {
 	  var spacer;
 	  var m = n % 12;
-	  if (m === 4 || m === 9 || m === 11) spacer = ' half-step-margin';else if (m === 2 || m === 7) spacer = ' whole-step-margin';
-	  if (n === 2) spacer = ' shift-left';
+	  if (m === 4 || m === 9 || m === 11) spacer = ' half-step-margin ';else if (m === 2 || m === 7) spacer = ' whole-step-margin ';
+	  if (n === 2) spacer = ' shift-left ';
 	  return spacer;
 	}
+
+	//------------------------- Keyboards set up -------------------------------
+
+	function buildKeyboard() {
+	  var keyboard = (0, _jquery2.default)('.keyboard');
+	  var keys = keyboardHTML();
+
+	  function keyboard25() {
+	    keyboard.children().remove();
+	    keyboard.append(keys.row1);
+	    (0, _jquery2.default)('.white-keys').addClass('white-25');
+	    (0, _jquery2.default)('.black-keys').addClass('black-25');
+	  }
+
+	  function keyboard49() {
+	    keyboard.children().remove();
+	    keyboard.append(keys.row2);
+	    keyboard.append(keys.row1);
+	    (0, _jquery2.default)('.white-keys').addClass('white-49');
+	    (0, _jquery2.default)('.black-keys').addClass('black-49');
+	    (0, _jquery2.default)('.row2').addClass('shift-down-49');
+	  }
+
+	  function keyboard73() {
+	    keyboard.children().remove();
+	    keyboard.append(keys.row3);
+	    keyboard.append(keys.row2);
+	    keyboard.append(keys.row1);
+	    (0, _jquery2.default)('.white-keys').addClass('white-73');
+	    (0, _jquery2.default)('.black-keys').addClass('black-73');
+	    (0, _jquery2.default)('.row3').addClass('shift-down-73-3');
+	    (0, _jquery2.default)('.row2').addClass('shift-down-73-2');
+	  }
+
+	  (0, _jquery2.default)('.keyboard-display').on('click', '.choice-box', function (e) {
+	    (0, _jquery2.default)('.keyboard-display').find('.choice-box').removeClass('clicked');
+	    (0, _jquery2.default)(this).addClass('clicked');
+	    var num = (0, _jquery2.default)(this).text();
+	    if (num == '25') keyboard25();
+	    if (num == '49') keyboard49();
+	    if (num == '73') keyboard73();
+	  });
+
+	  (function keyListeners() {
+	    var notes = ['A', 'As', 'B', 'C', 'Cs', 'D', 'Ds', 'E', 'F', 'Fs', 'G', 'Gs'];
+	    for (var i = 0; i < 12; i++) {
+	      keyListener(notes[i]);
+	    }
+	  })();
+
+	  function keyListener(note) {
+	    var key = (0, _jquery2.default)('.keyboard');
+	    keyboard.on('mousedown', '.' + note, function () {
+	      key = (0, _jquery2.default)(this);
+	      key.addClass(note + '-color');
+	    }).on('mouseup mouseout', function () {
+	      key.removeClass(note + '-color');
+	    });
+	  }
+
+	  keyboard25();
+	  (0, _jquery2.default)('.js-kb25').addClass('clicked');
+	}
+
+	module.exports.build = buildKeyboard;
 
 /***/ }
 /******/ ]);

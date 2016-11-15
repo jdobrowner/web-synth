@@ -16,7 +16,6 @@
   "_from": "home-or-tmp@>=2.0.0 <3.0.0",
   "_id": "home-or-tmp@2.0.0",
   "_inCache": true,
-  "_installable": true,
   "_location": "/home-or-tmp",
   "_nodeVersion": "0.12.4",
   "_npmUser": {

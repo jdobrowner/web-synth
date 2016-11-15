@@ -16,7 +16,6 @@
   "_from": "memory-fs@>=0.3.0 <0.4.0",
   "_id": "memory-fs@0.3.0",
   "_inCache": true,
-  "_installable": true,
   "_location": "/memory-fs",
   "_nodeVersion": "4.0.0",
   "_npmUser": {

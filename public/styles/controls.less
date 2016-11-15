@@ -13,15 +13,17 @@
 }
 
 header {
-  width: 100%;
+  z-index: 2;
+  width: 94%;
+  margin: 50px 0;
   display: flex;
   justify-content: space-between;
-  div {
+  > div {
     text-align: center;
-    width: 225px;
+    width: 160px;
     display: flex;
     flex-direction: column;
-    div {
+    > div {
       display: flex;
       flex-direction: row;
       justify-content: space-between;
@@ -35,8 +37,61 @@ header {
   width: 40px;
   height: 40px;
   .border;
+  cursor: pointer;
 }
 
 .clicked {
   background-color: @white;
+}
+
+h3 {
+  text-align: center;
+  padding-bottom: 20px;
+}
+
+.slider {
+  width: 20px;
+  height: 160px;
+  .border;
+}
+
+.controls {
+  display: flex;
+  justify-content: space-between;
+  width: 94%;
+  margin-bottom: 50px;
+  > div {
+    display: flex;
+    justify-content: space-around;
+    > div {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      flex: 1 0 70px;
+      height: 200px;
+      h2 {
+        transform: rotate(270deg);
+      	transform-origin: center center;
+      }
+    }
+    .choice-box-container{
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      height: 160px;
+    }
+  }
+  .main-controls {
+    width: 280px;
+  }
+  .envelope {
+    width: 350px;
+  }
+  .delay {
+    width: 210px;
+  }
+  .tremelo {
+    width: 280px;
+  }
 }

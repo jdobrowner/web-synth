@@ -16,7 +16,6 @@
   "_from": "pkg-dir@>=1.0.0 <2.0.0",
   "_id": "pkg-dir@1.0.0",
   "_inCache": true,
-  "_installable": true,
   "_location": "/pkg-dir",
   "_nodeVersion": "0.12.7",
   "_npmUser": {

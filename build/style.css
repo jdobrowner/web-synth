@@ -61,7 +61,8 @@ ul {
   display: flex;
   flex-direction: column;
   width: 94%;
-  height: 500px;
+  height: 700px;
+  margin-top: -280px;
 }
 .keys {
   position: relative;
@@ -74,6 +75,7 @@ ul {
   z-index: 2;
 }
 .white-keys div {
+  cursor: pointer;
   background-color: #fefefe;
   border: 2px solid #333333;
   flex: 1 0 6.667%;
@@ -84,6 +86,7 @@ ul {
   align-items: stretch;
 }
 .black-keys div {
+  cursor: pointer;
   background-color: #333333;
   border: 2px solid #333333;
   width: 4.445%;
@@ -101,34 +104,34 @@ ul {
   margin-left: 8.889%;
 }
 .white-25 {
-  height: 300px;
+  height: 420px;
 }
 .black-25 {
-  height: 198px;
-  top: 198px;
+  height: 277.2px;
+  top: 277.2px;
 }
 .white-49 {
-  height: 150px;
+  height: 210px;
 }
 .black-49 {
-  height: 99px;
-  top: 99px;
+  height: 138.6px;
+  top: 138.6px;
 }
 .white-73 {
-  height: 99.99px;
+  height: 139.986px;
 }
 .black-73 {
-  height: 66px;
-  top: 66px;
+  height: 92.4px;
+  top: 92.4px;
 }
 .shift-down-49 {
-  top: 99px;
+  top: 138.6px;
 }
 .shift-down-73-2 {
-  top: 66px;
+  top: 92.4px;
 }
 .shift-down-73-3 {
-  top: 132px;
+  top: 184.8px;
 }
 .white-keys .A-color {
   background-color: #c97e33;
@@ -167,17 +170,19 @@ ul {
   background-color: #c55d34;
 }
 header {
-  width: 100%;
+  z-index: 2;
+  width: 94%;
+  margin: 50px 0;
   display: flex;
   justify-content: space-between;
 }
-header div {
+header > div {
   text-align: center;
-  width: 225px;
+  width: 160px;
   display: flex;
   flex-direction: column;
 }
-header div div {
+header > div > div {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -188,9 +193,59 @@ header div div {
   width: 40px;
   height: 40px;
   border: 2px solid #333333;
+  cursor: pointer;
 }
 .clicked {
   background-color: #fefefe;
+}
+h3 {
+  text-align: center;
+  padding-bottom: 20px;
+}
+.slider {
+  width: 20px;
+  height: 160px;
+  border: 2px solid #333333;
+}
+.controls {
+  display: flex;
+  justify-content: space-between;
+  width: 94%;
+  margin-bottom: 50px;
+}
+.controls > div {
+  display: flex;
+  justify-content: space-around;
+}
+.controls > div > div {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 1 0 70px;
+  height: 200px;
+}
+.controls > div > div h2 {
+  transform: rotate(270deg);
+  transform-origin: center center;
+}
+.controls > div .choice-box-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 160px;
+}
+.controls .main-controls {
+  width: 280px;
+}
+.controls .envelope {
+  width: 350px;
+}
+.controls .delay {
+  width: 210px;
+}
+.controls .tremelo {
+  width: 280px;
 }
 body {
   background-color: #fefefe;
@@ -203,9 +258,9 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: space-between;
-  border: 2px solid #333333;
-  border-radius: 10px;
-  width: 80%;
-  margin-top: 100px;
+  border: 3px solid #333333;
+  border-radius: 12px;
+  width: 94%;
+  margin-top: 40px;
   background-color: #dadada;
 }
