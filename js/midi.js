@@ -1,3 +1,4 @@
+import * as synth from './synth.js';
 import $ from "jquery";
 
 function midiInit() {
@@ -30,12 +31,16 @@ function addListeners(input) {
         var note = matchingKeyID(e.note.name, e.note.octave);
         var $key = $('.' + note.id);
         $key.addClass(note.letter + '-color');
+
+        synth.trigger.emit('trigger', e.note.name + (e.note.octave + 4));
       }
     );
   input.addListener('noteoff', "all", function (e) {
         var note = matchingKeyID(e.note.name, e.note.octave);
         var $key = $('.' + note.id);
         $key.removeClass(note.letter + '-color');
+
+        synth.trigger.emit('release', e.note.name + (e.note.octave + 4));
       }
     );
   // input.addListener('controlchange', "all", function (e) {

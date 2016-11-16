@@ -1,21 +1,22 @@
+import * as synth from './synth.js';
 import $ from "jquery";
 
 //--------------------- set up the html for the keyboard ----------------------
 
 function keyboardHTML() {
 
-  const CLASS = '<div class="', END = '"></div>', CLOSE = '</div>';
+  const CLASS = '<div class="', ID = '" id="', END = '"></div>', CLOSE = '</div>';
   const KEYS = '<div class="keys', BLACK = '<div class="black-keys">', WHITE = '<div class="white-keys">';
 
   var whiteKeyNums = [1,3,5,6,8,10,12,13,15,17,18,20,22,24,25];
   var blackKeyNums = [2,4,7,9,11,14,16,19,21,23];
 
-  var whiteKeys25 = whiteKeyNums.map( n => CLASS + getLetter(n) + n + END ).join('');
-  var blackKeys25 = blackKeyNums.map( n => CLASS + getLetter(n) + spacing(n) + n + END ).join('');
-  var whiteKeys49 = whiteKeyNums.map( n => CLASS + getLetter(n) + (n+24) + END ).join('');
-  var blackKeys49 = blackKeyNums.map( n => CLASS + getLetter(n) + spacing(n) + (n+24) + END ).join('');
-  var whiteKeys73 = whiteKeyNums.map( n => CLASS + getLetter(n) + (n+48) + END ).join('');
-  var blackKeys73 = blackKeyNums.map( n => CLASS + getLetter(n) + spacing(n) + (n+48) + END ).join('');
+  var whiteKeys25 = whiteKeyNums.map( n => CLASS + getLetter(n) + n + ID + n + END ).join('');
+  var blackKeys25 = blackKeyNums.map( n => CLASS + getLetter(n) + spacing(n) + n +  ID + n + END ).join('');
+  var whiteKeys49 = whiteKeyNums.map( n => CLASS + getLetter(n) + (n+24) + ID + (n+24) +  END ).join('');
+  var blackKeys49 = blackKeyNums.map( n => CLASS + getLetter(n) + spacing(n) + (n+24) + ID + n +  END ).join('');
+  var whiteKeys73 = whiteKeyNums.map( n => CLASS + getLetter(n) + (n+48) + ID + (n+48) +  END ).join('');
+  var blackKeys73 = blackKeyNums.map( n => CLASS + getLetter(n) + spacing(n) + (n+48) + ID + n +  END ).join('');
 
   var row1 = KEYS + ' row1">' + BLACK + blackKeys25 + CLOSE + WHITE + whiteKeys25 + CLOSE + CLOSE;
   var row2 = KEYS + ' row2">' + BLACK + blackKeys49 + CLOSE + WHITE + whiteKeys49 + CLOSE + CLOSE;
@@ -39,6 +40,28 @@ function getLetter(n) {
     case 10: return 'A ';
     case 11: return 'As ';
     case 0: return 'B ';
+    default: return;
+  }
+}
+
+function getTone(n) {
+  var m = n % 12;
+  var octave = Math.floor(n/12);
+  var letter;
+
+  switch(m) {
+    case 1: return 'C' + octave;
+    case 2: return 'C#' + octave;
+    case 3: return 'D' + octave;
+    case 4: return 'D#' + octave;
+    case 5: return 'E' + octave;
+    case 6: return 'F' + octave;
+    case 7: return 'F#' + octave;
+    case 8: return 'G' + octave;
+    case 9: return 'G#' + octave;
+    case 10: return 'A' + octave;
+    case 11: return 'A#' + octave;
+    case 0: return 'B' + (octave - 1);
     default: return;
   }
 }
@@ -103,10 +126,20 @@ function buildKeyboard() {
 
   function keyListener(note) {
     var key = $('.keyboard');
+    var tone;
     keyboard.on('mousedown', '.' + note, function() {
       key = $(this);
       key.addClass(note + '-color');
-      }).on('mouseup mouseout', function() { key.removeClass(note + '-color'); });
+
+      var keyId = $(this).attr('id');
+      tone = getTone(parseInt(keyId));
+      synth.trigger.emit('trigger', tone);
+
+    }).on('mouseup mouseout', function() {
+      key.removeClass(note + '-color');
+    });
+
+
   }
 
   keyboard25();
