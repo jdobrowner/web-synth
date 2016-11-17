@@ -23,8 +23,6 @@ function midiInit() {
 }
 
 function addListeners(input) {
-  console.log(input);
-  console.log(input._midiInput.name);
   $('.keyboard-input-name').text(input._midiInput.name);
 
   input.addListener('noteon', "all", function (e) {
@@ -93,7 +91,5 @@ function getLetterFromBaseNumber(n) {
     default: return;
   }
 }
-
-
 
 module.exports.init = midiInit;

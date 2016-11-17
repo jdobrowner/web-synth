@@ -1,17 +1,13 @@
 import * as midi from './midi.js';
+import * as sounds from './sounds.js';
 import * as keyboard from './keyboards.js';
 import * as controls from './controls.js';
+import * as synth from './synth.js';
 import $ from "jquery";
 
-// add global event emitter here
-// var Event = require('events');
-// var toneTrigger = new Event();
-// toneTrigger.on('play-note', function(note){ // call tone.js to play the note });
-// toneTrigger.on('stop-note', function(note){ // call tone.js to release the note });
-
-// toneTrigger.emit('play-note', note)
-
+var soundSetting = sounds.settings();
 
 keyboard.build();
+controls.init(soundSetting);
 midi.init();
-controls.init();
+synth.init(soundSetting);

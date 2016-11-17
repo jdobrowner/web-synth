@@ -14,9 +14,9 @@ function keyboardHTML() {
   var whiteKeys25 = whiteKeyNums.map( n => CLASS + getLetter(n) + n + ID + n + END ).join('');
   var blackKeys25 = blackKeyNums.map( n => CLASS + getLetter(n) + spacing(n) + n +  ID + n + END ).join('');
   var whiteKeys49 = whiteKeyNums.map( n => CLASS + getLetter(n) + (n+24) + ID + (n+24) +  END ).join('');
-  var blackKeys49 = blackKeyNums.map( n => CLASS + getLetter(n) + spacing(n) + (n+24) + ID + n +  END ).join('');
+  var blackKeys49 = blackKeyNums.map( n => CLASS + getLetter(n) + spacing(n) + (n+24) + ID + (n+24) +  END ).join('');
   var whiteKeys73 = whiteKeyNums.map( n => CLASS + getLetter(n) + (n+48) + ID + (n+48) +  END ).join('');
-  var blackKeys73 = blackKeyNums.map( n => CLASS + getLetter(n) + spacing(n) + (n+48) + ID + n +  END ).join('');
+  var blackKeys73 = blackKeyNums.map( n => CLASS + getLetter(n) + spacing(n) + (n+48) + ID + (n+48) +  END ).join('');
 
   var row1 = KEYS + ' row1">' + BLACK + blackKeys25 + CLOSE + WHITE + whiteKeys25 + CLOSE + CLOSE;
   var row2 = KEYS + ' row2">' + BLACK + blackKeys49 + CLOSE + WHITE + whiteKeys49 + CLOSE + CLOSE;
@@ -127,6 +127,7 @@ function buildKeyboard() {
   function keyListener(note) {
     var key = $('.keyboard');
     var tone;
+    var hasBeenReleased = true;
     keyboard.on('mousedown', '.' + note, function() {
       key = $(this);
       key.addClass(note + '-color');
@@ -134,16 +135,21 @@ function buildKeyboard() {
       var keyId = $(this).attr('id');
       tone = getTone(parseInt(keyId));
       synth.trigger.emit('trigger', tone);
+      hasBeenReleased = false;
 
-    }).on('mouseup mouseout', function() {
-      key.removeClass(note + '-color');
+    }).on('mouseup', function() {
+      if ((!hasBeenReleased) && (tone !== 'undefined')) {
+        key.removeClass(note + '-color');
+        synth.trigger.emit('release', tone);
+        hasBeenReleased = true;
+      }
     });
 
 
   }
 
-  keyboard25();
-  $('.js-kb25').addClass('clicked');
+  keyboard49();
+  $('.js-kb49').addClass('clicked');
 }
 
 module.exports.build = buildKeyboard;
