@@ -226,6 +226,8 @@
 	var toneTrigger = new EventEmitter();
 	var controller = new EventEmitter();
 
+	var loadPatch;
+
 	function synthInit(controls) {
 
 	  console.log(controls);
@@ -250,13 +252,53 @@
 	  var synth8 = new Tone.Synth(sourceOptions);
 	  var synthArray = [synth1, synth2, synth3, synth4, synth5, synth6, synth7, synth8];
 
-	  var distortion = new Tone.Distortion();
+	  console.log(synth1);
+
+	  // var distortion = new Tone.BitCrusher( normalizeBits(controls.crusher.bits) );
+	  // var reverb = new Tone.Freeverb( { roomSize: normalizeMaster(controls.master.reverb) } );
+	  // var volume = new Tone.Volume( normalizeVolume(controls.master.volume) );
+	  // var delay = new Tone.FeedbackDelay( { delayTime: normalizeDelayTime(controls.delay.time),
+	  //                                       feedback: normalizeDelayFeedback(controls.delay.feedback),
+	  //                                       wet: 0
+	  //                                     });
+	  // var tremolo = new Tone.Tremolo( { frequency: normalizeTremoloFrequency(controls.tremolo.frequency),
+	  //                                   type: 'sine',
+	  //                                   depth: normalizeTremoloDepth(controls.tremolo.depth),
+	  //                                   spread: 0 } ).start();
+	  // var compressor = new Tone.Compressor(-30, 3);
+
+	  var distortion = new Tone.BitCrusher();
 	  var reverb = new Tone.Freeverb();
 	  var volume = new Tone.Volume();
-	  var delay = new Tone.FeedbackDelay();
-	  var tremolo = new Tone.Tremolo();
+	  var delay = new Tone.FeedbackDelay({ wet: 0 });
+	  var tremolo = new Tone.Tremolo({ type: 'sine', spread: 0 }).start();
+	  var compressor = new Tone.Compressor(-30, 3);
 
-	  synth1.chain(reverb, volume, Tone.Master);
+	  function loadSoundPatch(controls) {
+	    synthArray.forEach(function (s) {
+	      s.oscillator.type = controls.master.shape;
+	      s.envelope.attack = normalizeEnvelope(controls.envelope.attack);
+	      s.envelope.decay = normalizeEnvelope(controls.envelope.decay);
+	      s.envelope.sustain = normalizeEnvelope(controls.envelope.sustain);
+	      s.envelope.release = normalizeEnvelope(controls.envelope.release);
+	    });
+	    volume.volume.input.value = normalizeVolume(controls.master.volume);
+	    reverb.roomSize.input.value = normalizeMaster(controls.master.reverb);
+	    distortion.bits = normalizeBits(controls.crusher.bits);
+	    distortion.wet.value = normalizeFilter(controls.crusher.filter);
+	    delay.delayTime.value = normalizeDelayTime(controls.delay.time);
+	    var v = normalizeDelayFeedback(controls.delay.feedback);
+	    delay.feedback.value = v * 0.8;
+	    delay.wet.value = v * 0.5;
+	    tremolo.depth.value = normalizeTremoloDepth(controls.tremolo.depth);
+	    tremolo.frequency.value = normalizeTremoloFrequency(controls.tremolo.frequency);
+	  }
+	  loadSoundPatch(controls);
+	  loadPatch = loadSoundPatch; // to be exported and used when a different sound patch is chosen
+
+	  synthArray.forEach(function (s) {
+	    s.chain(distortion, compressor, tremolo, delay, reverb, volume, Tone.Master);
+	  });
 
 	  var synthStack = {
 	    synth1: '',
@@ -368,56 +410,58 @@
 	  });
 
 	  function updateSynthSound(controlID, value) {
+	    var val;
 	    switch (controlID) {
 	      case 'shape':
 	        updateShape(value);
 	        break;
 	      case 'volume':
-	        var val = normalizeVolume(value);
+	        val = normalizeVolume(value);
 	        updateVolume(val);
 	        break;
 	      case 'reverb':
-	        var val = normalizeMaster(value);
+	        val = normalizeMaster(value);
 	        updateReverb(val);
 	        break;
-	      case 'distortion':
-	        var val = normalizeMaster(value);
-	        updateDistortion(val);
-	        break;
 	      case 'attack':
-	        var val = normalizeEnvelope(value);
+	        val = normalizeEnvelope(value);
 	        updateAttack(val);
 	        break;
 	      case 'decay':
-	        var val = normalizeEnvelope(value);
+	        val = normalizeEnvelope(value);
 	        updateDecay(val);
 	        break;
 	      case 'sustain':
-	        var val = normalizeEnvelope(value);
+	        val = normalizeEnvelope(value);
 	        updateSustain(val);
 	        break;
 	      case 'release':
-	        var val = normalizeEnvelope(value);
+	        val = normalizeEnvelope(value);
 	        updateRelease(val);
 	        break;
+	      case 'bits':
+	        val = normalizeBits(value);
+	        updateBits(val);
+	        break;
+	      case 'filter':
+	        val = normalizeFilter(value);
+	        updateFilter(val);
+	        break;
 	      case 'delay-time':
-	        var val = normalizeDelayTime(value);
+	        val = normalizeDelayTime(value);
 	        updateDelayTime(val);
 	        break;
 	      case 'delay-feedback':
-	        var val = normalizeDelayFeedback(value);
+	        val = normalizeDelayFeedback(value);
 	        updateDelayFeedback(val);
 	        break;
-	      case 'tremelo-shape':
-	        updateTremeloShape(value);
+	      case 'tremolo-depth':
+	        val = normalizeTremoloDepth(value);
+	        updateTremoloDepth(val);
 	        break;
-	      case 'tremelo-depth':
-	        var val = normalizeTremeloDepth(value);
-	        updateTremeloDepth(val);
-	        break;
-	      case 'tremelo-frequency':
-	        var val = normalizeTremeloFrequency(value);
-	        updateTremeloFrequency(val);
+	      case 'tremolo-frequency':
+	        val = normalizeTremoloFrequency(value);
+	        updateTremoloFrequency(val);
 	        break;
 	      default:
 	        break;
@@ -425,61 +469,91 @@
 	  }
 
 	  function updateShape(v) {
+
 	    synthArray.forEach(function (s) {
 	      s.oscillator.type = v;
 	    });
 	  }
 	  function updateVolume(v) {
+	    console.log(volume);
 	    synthArray.forEach(function (s) {
 	      volume.volume.input.value = v;
 	    });
 	  }
 	  function updateReverb(v) {
+	    console.log('reverb = ' + v);
+	    console.log(reverb);
 	    synthArray.forEach(function (s) {
-	      console.log(reverb);
 	      reverb.roomSize.input.value = v;
 	    });
 	  }
-	  function updateDistortion(v) {
-	    console.log('distortion = ' + v);
-	  }
 	  function updateAttack(v) {
+	    console.log('attack = ' + v);
 	    synthArray.forEach(function (s) {
 	      s.envelope.attack = v;
 	    });
 	  }
 	  function updateDecay(v) {
+	    console.log('decay = ' + v);
 	    synthArray.forEach(function (s) {
 	      s.envelope.decay = v;
 	    });
 	  }
 	  function updateSustain(v) {
+	    console.log('sustain = ' + v);
 	    synthArray.forEach(function (s) {
 	      s.envelope.sustain = v;
 	    });
 	  }
 	  function updateRelease(v) {
+	    console.log('release = ' + v);
 	    synthArray.forEach(function (s) {
 	      s.envelope.release = v;
 	    });
 	  }
+	  function updateBits(v) {
+	    console.log('bits = ' + v);
+	    console.log(distortion);
+	    synthArray.forEach(function (s) {
+	      distortion.bits = v;
+	    });
+	  }
+	  function updateFilter(v) {
+	    console.log('filter = ' + v);
+	    console.log(distortion);
+	    synthArray.forEach(function (s) {
+	      distortion.wet.value = v;
+	    });
+	  }
 	  function updateDelayTime(v) {
 	    console.log('delay time =' + v);
+	    console.log(delay);
+	    synthArray.forEach(function (s) {
+	      delay.delayTime.value = v;
+	    });
 	  }
 	  function updateDelayFeedback(v) {
 	    console.log('delay feedback = ' + v);
+	    console.log(delay);
+	    synthArray.forEach(function (s) {
+	      delay.feedback.value = v * 0.8;
+	      delay.wet.value = v * 0.5;
+	    });
 	  }
-	  function updateTremeloShape(v) {
-	    console.log('tremelo shape = ' + v);
+	  function updateTremoloDepth(v) {
+	    console.log('tremolo depth = ' + v);
+	    console.log(tremolo);
+	    synthArray.forEach(function (s) {
+	      tremolo.depth.value = v;
+	    });
 	  }
-	  function updateTremeloDepth(v) {
-	    console.log('tremelo depth = ' + v);
+	  function updateTremoloFrequency(v) {
+	    console.log('tremolo freq = ' + v);
+	    console.log(tremolo);
+	    synthArray.forEach(function (s) {
+	      tremolo.frequency.value = v;
+	    });
 	  }
-	  function updateTremeloFrequency(v) {
-	    console.log('tremelo freq = ' + v);
-	  }
-
-	  function applyToAllSynths() {}
 	}
 
 	function normalizeVolume(v) {
@@ -491,16 +565,22 @@
 	function normalizeEnvelope(v) {
 	  return v * 0.03;
 	} // range [0, 3]
+	function normalizeBits(v) {
+	  return Math.ceil(v * 0.07 + 0.1);
+	} // range [2, 12] integers
+	function normalizeFilter(v) {
+	  return v * 0.01;
+	} // range [0, 1]
 	function normalizeDelayTime(v) {
-	  return v * 0.02;
-	} // range [0, 2]
+	  return v * 0.01;
+	} // range [0, 1]
 	function normalizeDelayFeedback(v) {
-	  return v * 0.008;
-	} // range [0, 0.8]
-	function normalizeTremeloDepth(v) {
-	  return v * 0.02;
-	} // range [0, 2]
-	function normalizeTremeloFrequency(v) {
+	  return v * 0.01;
+	} // range [0, 1]
+	function normalizeTremoloDepth(v) {
+	  return v * 0.01;
+	} // range [0, 1]
+	function normalizeTremoloFrequency(v) {
 	  return v * 0.1 + 1;
 	} // range [1, 11]
 
@@ -33015,28 +33095,29 @@
 
 	function settings() {
 
-	  var master = new MasterControls('sine', 45, 20, 0);
-	  var envelope = new Envelope(30, 10, 80, 25);
-	  var delay = new Delay(0, 0);
-	  var tremelo = new Tremelo('square', 0, 0);
-	  var sound = new ControlSettings('poo sound', master, envelope, delay, tremelo);
+	  var master = new MasterControls('triangle', 50, 50);
+	  var envelope = new Envelope(5, 50, 50, 5);
+	  var crusher = new Crusher(100, 0);
+	  var delay = new Delay(50, 0);
+	  var tremolo = new Tremolo('sawtooth', 0, 50);
+	  var sound = new ControlSettings('poo sound', master, envelope, crusher, delay, tremolo);
 
 	  return sound;
 	}
 
-	function ControlSettings(name, master, envelope, delay, tremelo) {
+	function ControlSettings(name, master, envelope, crusher, delay, tremolo) {
 	  this.name = name;
 	  this.master = master;
 	  this.envelope = envelope;
+	  this.crusher = crusher;
 	  this.delay = delay;
-	  this.tremelo = tremelo;
+	  this.tremolo = tremolo;
 	}
 
-	function MasterControls(shape, volume, reverb, distortion) {
+	function MasterControls(shape, volume, reverb) {
 	  this.shape = shape;
 	  this.volume = volume;
 	  this.reverb = reverb;
-	  this.distortion = distortion;
 	}
 
 	function Envelope(attack, decay, sustain, release) {
@@ -33046,12 +33127,17 @@
 	  this.release = release;
 	}
 
+	function Crusher(bits, filter) {
+	  this.bits = bits;
+	  this.filter = filter;
+	}
+
 	function Delay(time, feedback) {
 	  this.time = time;
 	  this.feedback = feedback;
 	}
 
-	function Tremelo(shape, depth, frequency) {
+	function Tremolo(shape, depth, frequency) {
 	  this.shape = shape;
 	  this.depth = depth;
 	  this.frequency = frequency;
@@ -33112,9 +33198,9 @@
 
 	function getControls(settings) {
 
-	  getShapes(settings.master.shape, settings.tremelo.shape);
+	  getShapes(settings.master.shape, settings.tremolo.shape);
 
-	  var controls = [createControl('volume', 100, settings.master.volume), createControl('reverb', 100, settings.master.reverb), createControl('distortion', 100, settings.master.distortion), createControl('attack', 100, settings.envelope.attack), createControl('decay', 100, settings.envelope.decay), createControl('sustain', 100, settings.envelope.sustain), createControl('release', 100, settings.envelope.release), createControl('delay-time', 100, settings.delay.time), createControl('delay-feedback', 100, settings.delay.feedback), createControl('tremelo-depth', 100, settings.tremelo.depth), createControl('tremelo-frequency', 100, settings.tremelo.frequency)];
+	  var controls = [createControl('volume', 100, settings.master.volume), createControl('reverb', 100, settings.master.reverb), createControl('attack', 100, settings.envelope.attack), createControl('decay', 100, settings.envelope.decay), createControl('sustain', 100, settings.envelope.sustain), createControl('release', 100, settings.envelope.release), createControl('bits', 100, settings.crusher.bits), createControl('filter', 100, settings.crusher.filter), createControl('delay-time', 100, settings.delay.time), createControl('delay-feedback', 100, settings.delay.feedback), createControl('tremolo-depth', 100, settings.tremolo.depth), createControl('tremolo-frequency', 100, settings.tremolo.frequency)];
 	  return controls;
 	}
 
@@ -33134,45 +33220,35 @@
 	  (0, _jquery2.default)('#circle').click(function (e) {
 	    (0, _jquery2.default)(this).addClass('clicked');
 	    (0, _jquery2.default)('#triangle').removeClass('clicked');
+	    (0, _jquery2.default)('#sawtooth').removeClass('clicked');
 	    (0, _jquery2.default)('#square').removeClass('clicked');
 	    synth.controller.emit('change', 'shape', 'sine');
 	  });
 	  (0, _jquery2.default)('#triangle').click(function (e) {
 	    (0, _jquery2.default)(this).addClass('clicked');
 	    (0, _jquery2.default)('#circle').removeClass('clicked');
+	    (0, _jquery2.default)('#sawtooth').removeClass('clicked');
 	    (0, _jquery2.default)('#square').removeClass('clicked');
 	    synth.controller.emit('change', 'shape', 'triangle');
+	  });
+	  (0, _jquery2.default)('#sawtooth').click(function (e) {
+	    (0, _jquery2.default)(this).addClass('clicked');
+	    (0, _jquery2.default)('#triangle').removeClass('clicked');
+	    (0, _jquery2.default)('#circle').removeClass('clicked');
+	    (0, _jquery2.default)('#square').removeClass('clicked');
+	    synth.controller.emit('change', 'shape', 'sawtooth');
 	  });
 	  (0, _jquery2.default)('#square').click(function (e) {
 	    (0, _jquery2.default)(this).addClass('clicked');
 	    (0, _jquery2.default)('#triangle').removeClass('clicked');
 	    (0, _jquery2.default)('#circle').removeClass('clicked');
+	    (0, _jquery2.default)('#sawtooth').removeClass('clicked');
 	    synth.controller.emit('change', 'shape', 'square');
-	  });
-	  (0, _jquery2.default)('#tremelo-circle').click(function (e) {
-	    (0, _jquery2.default)(this).addClass('clicked');
-	    (0, _jquery2.default)('#tremelo-triangle').removeClass('clicked');
-	    (0, _jquery2.default)('#tremelo-square').removeClass('clicked');
-	    synth.controller.emit('change', 'tremelo-shape', 'sine');
-	  });
-	  (0, _jquery2.default)('#tremelo-triangle').click(function (e) {
-	    (0, _jquery2.default)(this).addClass('clicked');
-	    (0, _jquery2.default)('#tremelo-circle').removeClass('clicked');
-	    (0, _jquery2.default)('#tremelo-square').removeClass('clicked');
-	    synth.controller.emit('change', 'tremelo-shape', 'triangle');
-	  });
-	  (0, _jquery2.default)('#tremelo-square').click(function (e) {
-	    (0, _jquery2.default)(this).addClass('clicked');
-	    (0, _jquery2.default)('#tremelo-triangle').removeClass('clicked');
-	    (0, _jquery2.default)('#tremelo-circle').removeClass('clicked');
-	    synth.controller.emit('change', 'tremelo-shape', 'square');
 	  });
 	}
 
-	function getShapes(synthShape, tremeloShape) {
-	  if (synthShape === 'sine') (0, _jquery2.default)('#circle').addClass('clicked');else if (synthShape === 'triangle') (0, _jquery2.default)('#triangle').addClass('clicked');else if (synthShape === 'square') (0, _jquery2.default)('#square').addClass('clicked');
-
-	  if (tremeloShape === 'sine') (0, _jquery2.default)('#tremelo-circle').addClass('clicked');else if (tremeloShape === 'triangle') (0, _jquery2.default)('#tremelo-triangle').addClass('clicked');else if (tremeloShape === 'square') (0, _jquery2.default)('#tremelo-square').addClass('clicked');
+	function getShapes(synthShape, tremoloShape) {
+	  if (synthShape === 'sine') (0, _jquery2.default)('#circle').addClass('clicked');else if (synthShape === 'triangle') (0, _jquery2.default)('#triangle').addClass('clicked');else if (synthShape === 'sawtooth') (0, _jquery2.default)('#sawtooth').addClass('clicked');else if (synthShape === 'square') (0, _jquery2.default)('#square').addClass('clicked');
 	}
 
 	module.exports.init = init;

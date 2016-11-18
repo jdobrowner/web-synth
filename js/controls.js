@@ -32,20 +32,21 @@ function init(sound) {
 
 function getControls(settings) {
 
-  getShapes(settings.master.shape, settings.tremelo.shape);
+  getShapes(settings.master.shape, settings.tremolo.shape);
 
   var controls = [
     createControl('volume', 100, settings.master.volume),
     createControl('reverb', 100, settings.master.reverb),
-    createControl('distortion', 100, settings.master.distortion),
     createControl('attack', 100, settings.envelope.attack),
     createControl('decay', 100, settings.envelope.decay),
     createControl('sustain', 100, settings.envelope.sustain),
     createControl('release', 100, settings.envelope.release),
+    createControl('bits', 100, settings.crusher.bits),
+    createControl('filter', 100, settings.crusher.filter),
     createControl('delay-time', 100, settings.delay.time),
     createControl('delay-feedback', 100, settings.delay.feedback),
-    createControl('tremelo-depth', 100, settings.tremelo.depth),
-    createControl('tremelo-frequency', 100, settings.tremelo.frequency)
+    createControl('tremolo-depth', 100, settings.tremolo.depth),
+    createControl('tremolo-frequency', 100, settings.tremolo.frequency)
   ];
   return controls;
 }
@@ -66,49 +67,38 @@ function shapeControlListeners() {
   $('#circle').click( function(e) {
     $(this).addClass('clicked');
     $('#triangle').removeClass('clicked');
+    $('#sawtooth').removeClass('clicked');
     $('#square').removeClass('clicked');
     synth.controller.emit('change', 'shape', 'sine');
   });
   $('#triangle').click( function(e) {
     $(this).addClass('clicked');
     $('#circle').removeClass('clicked');
+    $('#sawtooth').removeClass('clicked');
     $('#square').removeClass('clicked');
     synth.controller.emit('change', 'shape', 'triangle');
+  });
+  $('#sawtooth').click( function(e) {
+    $(this).addClass('clicked');
+    $('#triangle').removeClass('clicked');
+    $('#circle').removeClass('clicked');
+    $('#square').removeClass('clicked');
+    synth.controller.emit('change', 'shape', 'sawtooth');
   });
   $('#square').click( function(e) {
     $(this).addClass('clicked');
     $('#triangle').removeClass('clicked');
     $('#circle').removeClass('clicked');
+    $('#sawtooth').removeClass('clicked');
     synth.controller.emit('change', 'shape', 'square');
-  });
-  $('#tremelo-circle').click( function(e) {
-    $(this).addClass('clicked');
-    $('#tremelo-triangle').removeClass('clicked');
-    $('#tremelo-square').removeClass('clicked');
-    synth.controller.emit('change', 'tremelo-shape', 'sine');
-  });
-  $('#tremelo-triangle').click( function(e) {
-    $(this).addClass('clicked');
-    $('#tremelo-circle').removeClass('clicked');
-    $('#tremelo-square').removeClass('clicked');
-    synth.controller.emit('change', 'tremelo-shape', 'triangle');
-  });
-  $('#tremelo-square').click( function(e) {
-    $(this).addClass('clicked');
-    $('#tremelo-triangle').removeClass('clicked');
-    $('#tremelo-circle').removeClass('clicked');
-    synth.controller.emit('change', 'tremelo-shape', 'square');
   });
 }
 
-function getShapes(synthShape, tremeloShape) {
+function getShapes(synthShape, tremoloShape) {
   if (synthShape === 'sine') $('#circle').addClass('clicked');
   else if (synthShape === 'triangle') $('#triangle').addClass('clicked');
+  else if (synthShape === 'sawtooth') $('#sawtooth').addClass('clicked');
   else if (synthShape === 'square') $('#square').addClass('clicked');
-
-  if (tremeloShape === 'sine') $('#tremelo-circle').addClass('clicked');
-  else if (tremeloShape === 'triangle') $('#tremelo-triangle').addClass('clicked');
-  else if (tremeloShape === 'square') $('#tremelo-square').addClass('clicked');
 }
 
 module.exports.init = init;

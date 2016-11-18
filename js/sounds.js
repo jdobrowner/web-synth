@@ -2,28 +2,29 @@ import * as controls from './controls.js';
 
 function settings() {
 
-  var master = new MasterControls('sine', 45, 20, 0);
-  var envelope = new Envelope(30, 10, 80, 25);
-  var delay = new Delay(0, 0);
-  var tremelo = new Tremelo('square', 0, 0);
-  var sound = new ControlSettings('poo sound', master, envelope, delay, tremelo);
+  var master = new MasterControls('triangle', 50, 50);
+  var envelope = new Envelope(5, 50, 50, 5);
+  var crusher = new Crusher(100, 0);
+  var delay = new Delay(50, 0);
+  var tremolo = new Tremolo('sawtooth', 0, 50);
+  var sound = new ControlSettings('poo sound', master, envelope, crusher, delay, tremolo);
 
   return sound;
 }
 
-function ControlSettings(name, master, envelope, delay, tremelo) {
+function ControlSettings(name, master, envelope, crusher, delay, tremolo) {
   this.name = name;
   this.master = master;
   this.envelope = envelope;
+  this.crusher = crusher;
   this.delay = delay;
-  this.tremelo = tremelo;
+  this.tremolo = tremolo;
 }
 
-function MasterControls(shape, volume, reverb, distortion) {
+function MasterControls(shape, volume, reverb) {
   this.shape = shape;
   this.volume = volume;
   this.reverb = reverb;
-  this.distortion = distortion;
 }
 
 function Envelope(attack, decay, sustain, release) {
@@ -33,12 +34,17 @@ function Envelope(attack, decay, sustain, release) {
   this.release = release;
 }
 
+function Crusher(bits, filter) {
+  this.bits = bits;
+  this.filter = filter;
+}
+
 function Delay(time, feedback) {
   this.time = time;
   this.feedback = feedback;
 }
 
-function Tremelo(shape, depth, frequency) {
+function Tremolo(shape, depth, frequency) {
   this.shape = shape;
   this.depth = depth;
   this.frequency = frequency;
