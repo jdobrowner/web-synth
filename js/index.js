@@ -33,7 +33,6 @@ function changeSound(galaxy) {
   var galaxySound = soundSetting[galaxy];
   controls.init(galaxySound);
   $('.load-name-box').html(galaxySound.name);
-  //synth.load(galaxySound);
 }
 
 function circulateNum(n) {
