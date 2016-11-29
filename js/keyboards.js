@@ -78,6 +78,7 @@ function spacing(n) {
 //------------------------- Keyboards set up -------------------------------
 
 function buildKeyboard() {
+
   var keyboard = $('.keyboard');
   var keys = keyboardHTML();
 

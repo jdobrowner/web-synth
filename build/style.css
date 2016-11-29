@@ -34,16 +34,7 @@ nav {
   font: inherit;
   vertical-align: baseline;
 }
-article,
-aside,
-details,
-figcaption,
-figure,
-footer,
-header,
-menu,
-nav,
-section {
+header {
   display: block;
 }
 html,
@@ -52,10 +43,6 @@ body {
 }
 body {
   line-height: 1;
-}
-ol,
-ul {
-  list-style: none;
 }
 .keyboard {
   display: flex;
@@ -141,10 +128,10 @@ ul {
   top: 184.8px;
 }
 .white-keys .A-color {
-  background-color: #d17336;
+  background-color: #FCB040;
 }
 .white-keys .B-color {
-  background-color: #d17336;
+  background-color: #FCB040;
 }
 .white-keys .C-color {
   background-color: #FCB040;
@@ -156,25 +143,25 @@ ul {
   background-color: #FCB040;
 }
 .white-keys .F-color {
-  background-color: #d17336;
+  background-color: #FCB040;
 }
 .white-keys .G-color {
-  background-color: #d17336;
+  background-color: #FCB040;
 }
 .black-keys .As-color {
-  background-color: #5C476F;
+  background-color: #785a93;
 }
 .black-keys .Cs-color {
-  background-color: #5C476F;
+  background-color: #785a93;
 }
 .black-keys .Ds-color {
-  background-color: #5C476F;
+  background-color: #785a93;
 }
 .black-keys .Fs-color {
-  background-color: #5C476F;
+  background-color: #785a93;
 }
 .black-keys .Gs-color {
-  background-color: #5C476F;
+  background-color: #785a93;
 }
 .dots-container {
   display: flex;
@@ -238,10 +225,10 @@ header > div > div > div {
   font-size: 27px;
 }
 #triangle {
-  font-size: 22px;
+  font-size: 18px;
 }
 #sawtooth {
-  font-size: 13px;
+  font-size: 12px;
 }
 #square {
   font-size: 28px;
@@ -254,8 +241,8 @@ h3 {
   display: flex;
   justify-content: space-between;
   width: 88%;
-  margin-bottom: 100px;
-  margin-top: 40px;
+  margin-bottom: 80px;
+  margin-top: 30px;
 }
 .controls > div {
   display: flex;
@@ -298,7 +285,7 @@ h3 {
 }
 .keyboard-input,
 .load {
-  min-width: 220px;
+  min-width: 210px;
 }
 .keyboard-input {
   margin: 0 20px;
@@ -306,6 +293,7 @@ h3 {
 .keyboard-input-name,
 .load-name-box {
   height: 32px;
+  font-family: play, sans-serif;
   background-color: #353630;
   border: 3px solid #d17336;
   font-size: 0.9em;
@@ -2838,11 +2826,10 @@ body {
   background-color: #757a6f;
 }
 h1 {
-  font-size: 4em;
-  font-family: shuriken-std, monospace;
+  font-size: 4.2em;
+  font-family: shuriken-std, sans-serif;
   font-weight: bold;
   -webkit-text-stroke: 2px #ECECEB;
-  color: #d0644d;
 }
 h2 {
   font-size: 1.4em;
@@ -2857,7 +2844,7 @@ header h2 {
   padding-bottom: 16px;
 }
 .span-purple {
-  color: #5C476F;
+  color: #785a93;
 }
 .span-yellow {
   color: #FCB040;

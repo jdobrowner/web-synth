@@ -4,22 +4,25 @@ import $ from "jquery";
 function midiInit() {
 
   var  WebMidi = require('webmidi');
-  var input;
 
-  (function loadMidiDevice() {
+
+  function loadMidiDevice() {
+    var input;
+    WebMidi.disable();
     WebMidi.enable(function (err) {
-      if (err) {
-        console.log("WebMidi could not be enabled.", err);
-      }
+      if (err) {}
       else {
-        console.log("WebMidi enabled!");
         input = WebMidi.inputs[0];
         if (typeof input !== 'undefined') addListeners(input);
         else $('.keyboard-input-name').text('No Input Device Found');
       }
     });
-  })();
-  // module.exports.loadDevice = loadMidiDevice;
+  }
+  loadMidiDevice();
+
+  $('#keyboard-reload').click( function() {
+    loadMidiDevice();
+  });
 }
 
 function addListeners(input) {
@@ -41,10 +44,6 @@ function addListeners(input) {
         synth.trigger.emit('release', e.note.name + (e.note.octave + 4));
       }
     );
-  // input.addListener('controlchange', "all", function (e) {
-  //     console.log("Received 'controlchange' message.", e);
-  //   }
-  // );
 }
 
 //--------- match key on midi keyboard to the on screen keyboard keys ---------

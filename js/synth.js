@@ -1,5 +1,4 @@
 var Tone = require('Tone');
-
 var EventEmitter = require('events');
 var toneTrigger = new EventEmitter();
 var controller = new EventEmitter();
@@ -173,54 +172,67 @@ function synthInit(controls) {
         updateShape(value);
         break;
       case 'volume':
+        console.log( 'volume', value );
         val = normalizeVolume(value);
         updateVolume(val);
         break;
       case 'reverb':
+        console.log( 'reverb', value );
         val = normalizeReverb(value);
         updateReverb(val);
         break;
       case 'attack':
+        console.log( 'attack', value );
         val = normalizeEnvelope(value);
         updateAttack(val);
         break;
       case 'decay':
+        console.log( 'decay', value );
         val = normalizeEnvelope(value);
         updateDecay(val);
         break;
       case 'sustain':
+        console.log( 'sustain', value );
         val = normalizeSustain(value);
         updateSustain(val);
         break;
       case 'release':
+        console.log( 'release', value );
         val = normalizeEnvelope(value);
         updateRelease(val);
         break;
       case 'bits':
+        console.log( 'bits', value );
         val = normalizeBits(value);
         updateBits(val);
         break;
       case 'filter':
+        console.log( 'filter', value );
         val = normalizeFilter(value);
         updateFilter(val);
         break;
       case 'delay-time':
+        console.log( 'delay time', value );
         val = normalizeDelayTime(value);
         updateDelayTime(val);
         break;
       case 'delay-feedback':
+        console.log( 'delay feedback', value );
         val = normalizeDelayFeedback(value);
         updateDelayFeedback(val);
         break;
       case 'chorus-depth':
+        console.log( 'chorus depth', value );
         val = normalizeChorusDepth(value);
         updateChorusDepth(val);
         break;
       case 'chorus-frequency':
+        console.log( 'chorus frequency', value );
         val = normalizeChorusFrequency(value);
         updateChorusFrequency(val);
         break;
       case 'chorus-delay':
+        console.log( 'chorus delay', value );
         val = normalizeDelayTime(value);
         updateChorusDelay(val);
         break;
@@ -231,58 +243,44 @@ function synthInit(controls) {
   function updateShape(v) {
     synthArray.forEach( function(s) { s.oscillator.type = v; }); }
   function updateVolume(v) {
-    console.log( 'volume', v );
     synthArray.forEach( function(s) { volume.volume.input.value = v; }); }
   function updateReverb(v) {
-    console.log('reverb = ' + v);
     synthArray.forEach( function(s) { reverb.roomSize.input.value = v; });
   }
   function updateAttack(v) {
-    console.log( 'attack = ' + v );
     synthArray.forEach( function(s) { s.envelope.attack = v; });
   }
   function updateDecay(v) {
-    console.log( 'decay = ' + v );
     synthArray.forEach( function(s) { s.envelope.decay = v; });
   }
   function updateSustain(v) {
-    console.log( 'sustain = ' + v );
     synthArray.forEach( function(s) { s.envelope.sustain = v; });
   }
   function updateRelease(v) {
-    console.log( 'release = ' + v );
     synthArray.forEach( function(s) { s.envelope.release = v; });
   }
   function updateBits(v) {
-    console.log( 'bits = ' + v );
     synthArray.forEach( function(s) { distortion.bits = v; });
   }
   function updateFilter(v) {
-    console.log( 'filter = ' + v );
     synthArray.forEach( function(s) { distortion.wet.value = v; });
   }
   function updateDelayTime(v) {
-    console.log( 'delay time =' + v );
-    console.log( delay );
     synthArray.forEach( function(s) { delay.delayTime.value = v; });
   }
   function updateDelayFeedback(v) {
-    console.log( 'delay feedback = ' + v );
     synthArray.forEach( function(s) {
       delay.feedback.value = v * 0.8;
       delay.wet.value = v * 0.5;
     });
   }
   function updateChorusDepth(v) {
-    console.log( 'chorus depth = ' + v );
     synthArray.forEach( function(s) { chorus.depth = v; });
   }
   function updateChorusFrequency(v) {
-    console.log( 'chorus freq = ' + v );
     synthArray.forEach( function(s) { chorus.frequency.value = v; });
   }
   function updateChorusDelay(v) {
-    console.log( 'chorus freq = ' + v );
     synthArray.forEach( function(s) { chorus.delayTime = v; });
   }
 }

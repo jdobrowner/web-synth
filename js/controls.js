@@ -5,29 +5,31 @@ var uiSlider = require('jquery-ui/ui/widgets/slider');
 
 function init(sound) {
 
-  $( ".slider" ).each(function() {
-    // read initial values from markup and remove that
-    var value = parseInt($( this ).data('value'));
-    $( this ).empty().slider({
-      range: "min",
-      animate: true,
-      orientation: "vertical"
-    }); });
+  var loaded = false;
+  if (!loaded) {
+    loaded = true;
+    $( ".slider" ).each(function() {
+      // read initial values from markup and remove that
+      var value = parseInt($( this ).data('value'));
+      $( this ).empty().slider({
+        range: "min",
+        animate: true,
+        orientation: "vertical"
+      }); });
 
-  $( ".slider" ).slider({
-      change: function( event, ui ) {
-        var controlID = $(this).attr('id');
-        synth.controller.emit('change', controlID, ui.value);
-      },
-      create: function( event, ui ) {
-        console.log('created');
-      }
-    });
-
+    $( ".slider" ).slider({
+        change: function( event, ui ) {
+          var controlID = $(this).attr('id');
+          synth.controller.emit('change', controlID, ui.value);
+        },
+        create: function( event, ui ) {
+        }
+      });
+    shapeControlListeners();
+  }
+  
   var controls = getControls(sound);
   controls.forEach( function(control) { setUpSlider(control); });
-
-  shapeControlListeners();
 }
 
 function getControls(settings) {

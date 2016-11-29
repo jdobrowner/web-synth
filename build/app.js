@@ -75,11 +75,46 @@
 	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
 	var soundSetting = sounds.settings();
+	var ssLength = soundSetting.length;
+	var ssNum = Math.floor(Math.random() * ssLength);
 
 	keyboard.build();
-	controls.init(soundSetting);
+	controls.init(soundSetting[ssNum]);
+	(0, _jquery2.default)('.load-name-box').html(soundSetting[ssNum].name);
 	midi.init();
-	synth.init(soundSetting);
+	synth.init(soundSetting[ssNum]);
+
+	//-------- load different sound patch when load buttons are clicked -----------
+
+	(0, _jquery2.default)('#load-right').click(function () {
+	  unclickShapes();
+	  ssNum = circulateNum(ssNum + 1);
+	  changeSound(ssNum);
+	});
+	(0, _jquery2.default)('#load-left').click(function () {
+	  unclickShapes();
+	  ssNum = circulateNum(ssNum - 1);
+	  changeSound(ssNum);
+	});
+
+	function changeSound(galaxy) {
+	  var galaxySound = soundSetting[galaxy];
+	  controls.init(galaxySound);
+	  (0, _jquery2.default)('.load-name-box').html(galaxySound.name);
+	  //synth.load(galaxySound);
+	}
+
+	function circulateNum(n) {
+	  if (n === ssLength) n = 0;else if (n < 0) n = ssLength - 1;
+	  return n;
+	}
+
+	function unclickShapes() {
+	  (0, _jquery2.default)('#circle').removeClass('clicked');
+	  (0, _jquery2.default)('#triangle').removeClass('clicked');
+	  (0, _jquery2.default)('#sawtooth').removeClass('clicked');
+	  (0, _jquery2.default)('#square').removeClass('clicked');
+	}
 
 /***/ },
 /* 1 */
@@ -102,20 +137,22 @@
 	function midiInit() {
 
 	  var WebMidi = __webpack_require__(6);
-	  var input;
 
-	  (function loadMidiDevice() {
+	  function loadMidiDevice() {
+	    var input;
+	    WebMidi.disable();
 	    WebMidi.enable(function (err) {
-	      if (err) {
-	        console.log("WebMidi could not be enabled.", err);
-	      } else {
-	        console.log("WebMidi enabled!");
+	      if (err) {} else {
 	        input = WebMidi.inputs[0];
 	        if (typeof input !== 'undefined') addListeners(input);else (0, _jquery2.default)('.keyboard-input-name').text('No Input Device Found');
 	      }
 	    });
-	  })();
-	  // module.exports.loadDevice = loadMidiDevice;
+	  }
+	  loadMidiDevice();
+
+	  (0, _jquery2.default)('#keyboard-reload').click(function () {
+	    loadMidiDevice();
+	  });
 	}
 
 	function addListeners(input) {
@@ -135,10 +172,6 @@
 
 	    synth.trigger.emit('release', e.note.name + (e.note.octave + 4));
 	  });
-	  // input.addListener('controlchange', "all", function (e) {
-	  //     console.log("Received 'controlchange' message.", e);
-	  //   }
-	  // );
 	}
 
 	//--------- match key on midi keyboard to the on screen keyboard keys ---------
@@ -221,7 +254,6 @@
 	'use strict';
 
 	var Tone = __webpack_require__(3);
-
 	var EventEmitter = __webpack_require__(4);
 	var toneTrigger = new EventEmitter();
 	var controller = new EventEmitter();
@@ -390,54 +422,67 @@
 	        updateShape(value);
 	        break;
 	      case 'volume':
+	        console.log('volume', value);
 	        val = normalizeVolume(value);
 	        updateVolume(val);
 	        break;
 	      case 'reverb':
+	        console.log('reverb', value);
 	        val = normalizeReverb(value);
 	        updateReverb(val);
 	        break;
 	      case 'attack':
+	        console.log('attack', value);
 	        val = normalizeEnvelope(value);
 	        updateAttack(val);
 	        break;
 	      case 'decay':
+	        console.log('decay', value);
 	        val = normalizeEnvelope(value);
 	        updateDecay(val);
 	        break;
 	      case 'sustain':
+	        console.log('sustain', value);
 	        val = normalizeSustain(value);
 	        updateSustain(val);
 	        break;
 	      case 'release':
+	        console.log('release', value);
 	        val = normalizeEnvelope(value);
 	        updateRelease(val);
 	        break;
 	      case 'bits':
+	        console.log('bits', value);
 	        val = normalizeBits(value);
 	        updateBits(val);
 	        break;
 	      case 'filter':
+	        console.log('filter', value);
 	        val = normalizeFilter(value);
 	        updateFilter(val);
 	        break;
 	      case 'delay-time':
+	        console.log('delay time', value);
 	        val = normalizeDelayTime(value);
 	        updateDelayTime(val);
 	        break;
 	      case 'delay-feedback':
+	        console.log('delay feedback', value);
 	        val = normalizeDelayFeedback(value);
 	        updateDelayFeedback(val);
 	        break;
 	      case 'chorus-depth':
+	        console.log('chorus depth', value);
 	        val = normalizeChorusDepth(value);
 	        updateChorusDepth(val);
 	        break;
 	      case 'chorus-frequency':
+	        console.log('chorus frequency', value);
 	        val = normalizeChorusFrequency(value);
 	        updateChorusFrequency(val);
 	        break;
 	      case 'chorus-delay':
+	        console.log('chorus delay', value);
 	        val = normalizeDelayTime(value);
 	        updateChorusDelay(val);
 	        break;
@@ -452,81 +497,67 @@
 	    });
 	  }
 	  function updateVolume(v) {
-	    console.log('volume', v);
 	    synthArray.forEach(function (s) {
 	      volume.volume.input.value = v;
 	    });
 	  }
 	  function updateReverb(v) {
-	    console.log('reverb = ' + v);
 	    synthArray.forEach(function (s) {
 	      reverb.roomSize.input.value = v;
 	    });
 	  }
 	  function updateAttack(v) {
-	    console.log('attack = ' + v);
 	    synthArray.forEach(function (s) {
 	      s.envelope.attack = v;
 	    });
 	  }
 	  function updateDecay(v) {
-	    console.log('decay = ' + v);
 	    synthArray.forEach(function (s) {
 	      s.envelope.decay = v;
 	    });
 	  }
 	  function updateSustain(v) {
-	    console.log('sustain = ' + v);
 	    synthArray.forEach(function (s) {
 	      s.envelope.sustain = v;
 	    });
 	  }
 	  function updateRelease(v) {
-	    console.log('release = ' + v);
 	    synthArray.forEach(function (s) {
 	      s.envelope.release = v;
 	    });
 	  }
 	  function updateBits(v) {
-	    console.log('bits = ' + v);
 	    synthArray.forEach(function (s) {
 	      distortion.bits = v;
 	    });
 	  }
 	  function updateFilter(v) {
-	    console.log('filter = ' + v);
 	    synthArray.forEach(function (s) {
 	      distortion.wet.value = v;
 	    });
 	  }
 	  function updateDelayTime(v) {
-	    console.log('delay time =' + v);
-	    console.log(delay);
 	    synthArray.forEach(function (s) {
 	      delay.delayTime.value = v;
 	    });
 	  }
 	  function updateDelayFeedback(v) {
-	    console.log('delay feedback = ' + v);
 	    synthArray.forEach(function (s) {
 	      delay.feedback.value = v * 0.8;
 	      delay.wet.value = v * 0.5;
 	    });
 	  }
 	  function updateChorusDepth(v) {
-	    console.log('chorus depth = ' + v);
 	    synthArray.forEach(function (s) {
 	      chorus.depth = v;
 	    });
 	  }
 	  function updateChorusFrequency(v) {
-	    console.log('chorus freq = ' + v);
 	    synthArray.forEach(function (s) {
 	      chorus.frequency.value = v;
 	    });
 	  }
 	  function updateChorusDelay(v) {
-	    console.log('chorus freq = ' + v);
 	    synthArray.forEach(function (s) {
 	      chorus.delayTime = v;
 	    });
@@ -33075,14 +33106,37 @@
 
 	function settings() {
 
-	  var master = new MasterControls('triangle', 50, 50);
-	  var envelope = new Envelope(5, 50, 50, 5);
-	  var crusher = new Crusher(100, 0);
-	  var delay = new Delay(50, 0);
-	  var chorus = new Chorus(50, 50, 50);
-	  var sound = new ControlSettings('poo sound', master, envelope, crusher, delay, chorus);
+	  var master_MW = new MasterControls('sine', 90, 80);
+	  var envelope_MW = new Envelope(5, 50, 50, 5);
+	  var crusher_MW = new Crusher(100, 0);
+	  var delay_MW = new Delay(50, 0);
+	  var chorus_MW = new Chorus(50, 50, 50);
+	  var milkyWay = new ControlSettings('Milky Way', master_MW, envelope_MW, crusher_MW, delay_MW, chorus_MW);
 
-	  return sound;
+	  var master_AN = new MasterControls('square', 50, 30);
+	  var envelope_AN = new Envelope(5, 50, 50, 5);
+	  var crusher_AN = new Crusher(100, 0);
+	  var delay_AN = new Delay(30, 60);
+	  var chorus_AN = new Chorus(50, 50, 50);
+	  var andromeda = new ControlSettings('Andromeda', master_AN, envelope_AN, crusher_AN, delay_AN, chorus_AN);
+
+	  var master_TR = new MasterControls('triangle', 75, 50);
+	  var envelope_TR = new Envelope(5, 50, 50, 5);
+	  var crusher_TR = new Crusher(100, 0);
+	  var delay_TR = new Delay(30, 60);
+	  var chorus_TR = new Chorus(50, 50, 50);
+	  var triangulum = new ControlSettings('Triangulum', master_TR, envelope_TR, crusher_TR, delay_TR, chorus_TR);
+
+	  var master_CA = new MasterControls('sawtooth', 60, 10);
+	  var envelope_CA = new Envelope(5, 50, 50, 5);
+	  var crusher_CA = new Crusher(100, 0);
+	  var delay_CA = new Delay(30, 60);
+	  var chorus_CA = new Chorus(50, 50, 50);
+	  var centaurus = new ControlSettings('Centaurus A', master_CA, envelope_CA, crusher_CA, delay_CA, chorus_CA);
+
+	  var sounds = [milkyWay, andromeda, triangulum, centaurus];
+
+	  return sounds;
 	}
 
 	function ControlSettings(name, master, envelope, crusher, delay, chorus) {
@@ -33148,32 +33202,33 @@
 
 	function init(sound) {
 
-	  (0, _jquery2.default)(".slider").each(function () {
-	    // read initial values from markup and remove that
-	    var value = parseInt((0, _jquery2.default)(this).data('value'));
-	    (0, _jquery2.default)(this).empty().slider({
-	      range: "min",
-	      animate: true,
-	      orientation: "vertical"
+	  var loaded = false;
+	  if (!loaded) {
+	    loaded = true;
+	    (0, _jquery2.default)(".slider").each(function () {
+	      // read initial values from markup and remove that
+	      var value = parseInt((0, _jquery2.default)(this).data('value'));
+	      (0, _jquery2.default)(this).empty().slider({
+	        range: "min",
+	        animate: true,
+	        orientation: "vertical"
+	      });
 	    });
-	  });
 
-	  (0, _jquery2.default)(".slider").slider({
-	    change: function change(event, ui) {
-	      var controlID = (0, _jquery2.default)(this).attr('id');
-	      synth.controller.emit('change', controlID, ui.value);
-	    },
-	    create: function create(event, ui) {
-	      console.log('created');
-	    }
-	  });
+	    (0, _jquery2.default)(".slider").slider({
+	      change: function change(event, ui) {
+	        var controlID = (0, _jquery2.default)(this).attr('id');
+	        synth.controller.emit('change', controlID, ui.value);
+	      },
+	      create: function create(event, ui) {}
+	    });
+	    shapeControlListeners();
+	  }
 
 	  var controls = getControls(sound);
 	  controls.forEach(function (control) {
 	    setUpSlider(control);
 	  });
-
-	  shapeControlListeners();
 	}
 
 	function getControls(settings) {
@@ -35194,6 +35249,7 @@
 	//------------------------- Keyboards set up -------------------------------
 
 	function buildKeyboard() {
+
 	  var keyboard = (0, _jquery2.default)('.keyboard');
 	  var keys = keyboardHTML();
 
