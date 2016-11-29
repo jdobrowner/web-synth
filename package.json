@@ -8,7 +8,7 @@
     "build:html": "rm -f build/index.html && cp public/index.html build/",
     "build:css": "rm -f build/style.css && lessc public/styles/style.less build/style.css",
     "build:js": "rm -f build/app.js && webpack",
-    "watch": "npm run watch:css && npm run watch:html && npm run watch:js",
+    "watch": "npm run watch:css & npm run watch:html & npm run watch:js",
     "watch:html": "chokidar-cmd -c 'npm run build:html' -t public/index.html",
     "watch:css": "chokidar-cmd -c 'npm run build:css' -t public/styles/**/*.less",
     "watch:js": "webpack --watch"

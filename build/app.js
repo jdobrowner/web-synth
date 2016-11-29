@@ -123,14 +123,14 @@
 
 	  input.addListener('noteon', "all", function (e) {
 	    var note = matchingKeyID(e.note.name, e.note.octave);
-	    var $key = (0, _jquery2.default)('.' + note.id);
+	    var $key = (0, _jquery2.default)('.keys').find('#' + note.id);
 	    $key.addClass(note.letter + '-color');
 
 	    synth.trigger.emit('trigger', e.note.name + (e.note.octave + 4));
 	  });
 	  input.addListener('noteoff', "all", function (e) {
 	    var note = matchingKeyID(e.note.name, e.note.octave);
-	    var $key = (0, _jquery2.default)('.' + note.id);
+	    var $key = (0, _jquery2.default)('.keys').find('#' + note.id);
 	    $key.removeClass(note.letter + '-color');
 
 	    synth.trigger.emit('release', e.note.name + (e.note.octave + 4));
@@ -230,48 +230,21 @@
 
 	function synthInit(controls) {
 
-	  console.log(controls);
-
-	  var sourceOptions = {
-	    oscillator: { type: controls.master.shape },
-	    envelope: {
-	      attack: normalizeEnvelope(controls.envelope.attack),
-	      decay: normalizeEnvelope(controls.envelope.decay),
-	      sustain: normalizeEnvelope(controls.envelope.sustain),
-	      release: normalizeEnvelope(controls.envelope.release)
-	    }
-	  };
-
-	  var synth1 = new Tone.Synth(sourceOptions);
-	  var synth2 = new Tone.Synth(sourceOptions);
-	  var synth3 = new Tone.Synth(sourceOptions);
-	  var synth4 = new Tone.Synth(sourceOptions);
-	  var synth5 = new Tone.Synth(sourceOptions);
-	  var synth6 = new Tone.Synth(sourceOptions);
-	  var synth7 = new Tone.Synth(sourceOptions);
-	  var synth8 = new Tone.Synth(sourceOptions);
+	  var synth1 = new Tone.Synth();
+	  var synth2 = new Tone.Synth();
+	  var synth3 = new Tone.Synth();
+	  var synth4 = new Tone.Synth();
+	  var synth5 = new Tone.Synth();
+	  var synth6 = new Tone.Synth();
+	  var synth7 = new Tone.Synth();
+	  var synth8 = new Tone.Synth();
 	  var synthArray = [synth1, synth2, synth3, synth4, synth5, synth6, synth7, synth8];
-
-	  console.log(synth1);
-
-	  // var distortion = new Tone.BitCrusher( normalizeBits(controls.crusher.bits) );
-	  // var reverb = new Tone.Freeverb( { roomSize: normalizeMaster(controls.master.reverb) } );
-	  // var volume = new Tone.Volume( normalizeVolume(controls.master.volume) );
-	  // var delay = new Tone.FeedbackDelay( { delayTime: normalizeDelayTime(controls.delay.time),
-	  //                                       feedback: normalizeDelayFeedback(controls.delay.feedback),
-	  //                                       wet: 0
-	  //                                     });
-	  // var tremolo = new Tone.Tremolo( { frequency: normalizeTremoloFrequency(controls.tremolo.frequency),
-	  //                                   type: 'sine',
-	  //                                   depth: normalizeTremoloDepth(controls.tremolo.depth),
-	  //                                   spread: 0 } ).start();
-	  // var compressor = new Tone.Compressor(-30, 3);
 
 	  var distortion = new Tone.BitCrusher();
 	  var reverb = new Tone.Freeverb();
 	  var volume = new Tone.Volume();
 	  var delay = new Tone.FeedbackDelay({ wet: 0 });
-	  var tremolo = new Tone.Tremolo({ type: 'sine', spread: 0 }).start();
+	  var chorus = new Tone.Chorus();
 	  var compressor = new Tone.Compressor(-30, 3);
 
 	  function loadSoundPatch(controls) {
@@ -279,25 +252,26 @@
 	      s.oscillator.type = controls.master.shape;
 	      s.envelope.attack = normalizeEnvelope(controls.envelope.attack);
 	      s.envelope.decay = normalizeEnvelope(controls.envelope.decay);
-	      s.envelope.sustain = normalizeEnvelope(controls.envelope.sustain);
+	      s.envelope.sustain = normalizeSustain(controls.envelope.sustain);
 	      s.envelope.release = normalizeEnvelope(controls.envelope.release);
 	    });
 	    volume.volume.input.value = normalizeVolume(controls.master.volume);
-	    reverb.roomSize.input.value = normalizeMaster(controls.master.reverb);
+	    reverb.roomSize.input.value = normalizeReverb(controls.master.reverb);
 	    distortion.bits = normalizeBits(controls.crusher.bits);
 	    distortion.wet.value = normalizeFilter(controls.crusher.filter);
 	    delay.delayTime.value = normalizeDelayTime(controls.delay.time);
 	    var v = normalizeDelayFeedback(controls.delay.feedback);
 	    delay.feedback.value = v * 0.8;
 	    delay.wet.value = v * 0.5;
-	    tremolo.depth.value = normalizeTremoloDepth(controls.tremolo.depth);
-	    tremolo.frequency.value = normalizeTremoloFrequency(controls.tremolo.frequency);
+	    chorus.depth = normalizeChorusDepth(controls.chorus.depth);
+	    chorus.frequency.value = normalizeChorusFrequency(controls.chorus.frequency);
+	    chorus.delayTime = normalizeDelayTime(controls.chorus.delay);
 	  }
 	  loadSoundPatch(controls);
 	  loadPatch = loadSoundPatch; // to be exported and used when a different sound patch is chosen
 
 	  synthArray.forEach(function (s) {
-	    s.chain(distortion, compressor, tremolo, delay, reverb, volume, Tone.Master);
+	    s.chain(chorus, distortion, compressor, delay, reverb, volume, Tone.Master);
 	  });
 
 	  var synthStack = {
@@ -420,7 +394,7 @@
 	        updateVolume(val);
 	        break;
 	      case 'reverb':
-	        val = normalizeMaster(value);
+	        val = normalizeReverb(value);
 	        updateReverb(val);
 	        break;
 	      case 'attack':
@@ -432,7 +406,7 @@
 	        updateDecay(val);
 	        break;
 	      case 'sustain':
-	        val = normalizeEnvelope(value);
+	        val = normalizeSustain(value);
 	        updateSustain(val);
 	        break;
 	      case 'release':
@@ -455,13 +429,17 @@
 	        val = normalizeDelayFeedback(value);
 	        updateDelayFeedback(val);
 	        break;
-	      case 'tremolo-depth':
-	        val = normalizeTremoloDepth(value);
-	        updateTremoloDepth(val);
+	      case 'chorus-depth':
+	        val = normalizeChorusDepth(value);
+	        updateChorusDepth(val);
 	        break;
-	      case 'tremolo-frequency':
-	        val = normalizeTremoloFrequency(value);
-	        updateTremoloFrequency(val);
+	      case 'chorus-frequency':
+	        val = normalizeChorusFrequency(value);
+	        updateChorusFrequency(val);
+	        break;
+	      case 'chorus-delay':
+	        val = normalizeDelayTime(value);
+	        updateChorusDelay(val);
 	        break;
 	      default:
 	        break;
@@ -469,20 +447,18 @@
 	  }
 
 	  function updateShape(v) {
-
 	    synthArray.forEach(function (s) {
 	      s.oscillator.type = v;
 	    });
 	  }
 	  function updateVolume(v) {
-	    console.log(volume);
+	    console.log('volume', v);
 	    synthArray.forEach(function (s) {
 	      volume.volume.input.value = v;
 	    });
 	  }
 	  function updateReverb(v) {
 	    console.log('reverb = ' + v);
-	    console.log(reverb);
 	    synthArray.forEach(function (s) {
 	      reverb.roomSize.input.value = v;
 	    });
@@ -513,14 +489,12 @@
 	  }
 	  function updateBits(v) {
 	    console.log('bits = ' + v);
-	    console.log(distortion);
 	    synthArray.forEach(function (s) {
 	      distortion.bits = v;
 	    });
 	  }
 	  function updateFilter(v) {
 	    console.log('filter = ' + v);
-	    console.log(distortion);
 	    synthArray.forEach(function (s) {
 	      distortion.wet.value = v;
 	    });
@@ -534,37 +508,43 @@
 	  }
 	  function updateDelayFeedback(v) {
 	    console.log('delay feedback = ' + v);
-	    console.log(delay);
 	    synthArray.forEach(function (s) {
 	      delay.feedback.value = v * 0.8;
 	      delay.wet.value = v * 0.5;
 	    });
 	  }
-	  function updateTremoloDepth(v) {
-	    console.log('tremolo depth = ' + v);
-	    console.log(tremolo);
+	  function updateChorusDepth(v) {
+	    console.log('chorus depth = ' + v);
 	    synthArray.forEach(function (s) {
-	      tremolo.depth.value = v;
+	      chorus.depth = v;
 	    });
 	  }
-	  function updateTremoloFrequency(v) {
-	    console.log('tremolo freq = ' + v);
-	    console.log(tremolo);
+	  function updateChorusFrequency(v) {
+	    console.log('chorus freq = ' + v);
 	    synthArray.forEach(function (s) {
-	      tremolo.frequency.value = v;
+	      chorus.frequency.value = v;
+	    });
+	  }
+	  function updateChorusDelay(v) {
+	    console.log('chorus freq = ' + v);
+	    synthArray.forEach(function (s) {
+	      chorus.delayTime = v;
 	    });
 	  }
 	}
 
 	function normalizeVolume(v) {
-	  return v * 0.02;
-	} // range ? logarithmic function
-	function normalizeMaster(v) {
+	  return v * 0.0035;
+	} // range [0, 0.35]
+	function normalizeReverb(v) {
+	  return v * 0.009;
+	} //  range [0, 0.9]
+	function normalizeEnvelope(v) {
+	  return v * 0.04 + 0.01;
+	} // range [0.01, 4.01]
+	function normalizeSustain(v) {
 	  return v * 0.01;
 	} // range [0, 1]
-	function normalizeEnvelope(v) {
-	  return v * 0.03;
-	} // range [0, 3]
 	function normalizeBits(v) {
 	  return Math.ceil(v * 0.07 + 0.1);
 	} // range [2, 12] integers
@@ -572,17 +552,17 @@
 	  return v * 0.01;
 	} // range [0, 1]
 	function normalizeDelayTime(v) {
-	  return v * 0.01;
+	  return v * 0.009;
 	} // range [0, 1]
 	function normalizeDelayFeedback(v) {
 	  return v * 0.01;
 	} // range [0, 1]
-	function normalizeTremoloDepth(v) {
+	function normalizeChorusDepth(v) {
 	  return v * 0.01;
 	} // range [0, 1]
-	function normalizeTremoloFrequency(v) {
-	  return v * 0.1 + 1;
-	} // range [1, 11]
+	function normalizeChorusFrequency(v) {
+	  return v * 0.07 + 1;
+	} // range [1, 8]
 
 	module.exports.init = synthInit;
 	module.exports.trigger = toneTrigger;
@@ -33099,19 +33079,19 @@
 	  var envelope = new Envelope(5, 50, 50, 5);
 	  var crusher = new Crusher(100, 0);
 	  var delay = new Delay(50, 0);
-	  var tremolo = new Tremolo('sawtooth', 0, 50);
-	  var sound = new ControlSettings('poo sound', master, envelope, crusher, delay, tremolo);
+	  var chorus = new Chorus(50, 50, 50);
+	  var sound = new ControlSettings('poo sound', master, envelope, crusher, delay, chorus);
 
 	  return sound;
 	}
 
-	function ControlSettings(name, master, envelope, crusher, delay, tremolo) {
+	function ControlSettings(name, master, envelope, crusher, delay, chorus) {
 	  this.name = name;
 	  this.master = master;
 	  this.envelope = envelope;
 	  this.crusher = crusher;
 	  this.delay = delay;
-	  this.tremolo = tremolo;
+	  this.chorus = chorus;
 	}
 
 	function MasterControls(shape, volume, reverb) {
@@ -33137,10 +33117,10 @@
 	  this.feedback = feedback;
 	}
 
-	function Tremolo(shape, depth, frequency) {
-	  this.shape = shape;
+	function Chorus(depth, frequency, delay) {
 	  this.depth = depth;
 	  this.frequency = frequency;
+	  this.delay = delay;
 	}
 
 	module.exports.settings = settings;
@@ -33198,9 +33178,9 @@
 
 	function getControls(settings) {
 
-	  getShapes(settings.master.shape, settings.tremolo.shape);
+	  getShapes(settings.master.shape);
 
-	  var controls = [createControl('volume', 100, settings.master.volume), createControl('reverb', 100, settings.master.reverb), createControl('attack', 100, settings.envelope.attack), createControl('decay', 100, settings.envelope.decay), createControl('sustain', 100, settings.envelope.sustain), createControl('release', 100, settings.envelope.release), createControl('bits', 100, settings.crusher.bits), createControl('filter', 100, settings.crusher.filter), createControl('delay-time', 100, settings.delay.time), createControl('delay-feedback', 100, settings.delay.feedback), createControl('tremolo-depth', 100, settings.tremolo.depth), createControl('tremolo-frequency', 100, settings.tremolo.frequency)];
+	  var controls = [createControl('volume', 100, settings.master.volume), createControl('reverb', 100, settings.master.reverb), createControl('attack', 100, settings.envelope.attack), createControl('decay', 100, settings.envelope.decay), createControl('sustain', 100, settings.envelope.sustain), createControl('release', 100, settings.envelope.release), createControl('bits', 100, settings.crusher.bits), createControl('filter', 100, settings.crusher.filter), createControl('delay-time', 100, settings.delay.time), createControl('delay-feedback', 100, settings.delay.feedback), createControl('chorus-depth', 100, settings.chorus.depth), createControl('chorus-frequency', 100, settings.chorus.frequency), createControl('chorus-delay', 100, settings.chorus.delay)];
 	  return controls;
 	}
 
@@ -33247,7 +33227,7 @@
 	  });
 	}
 
-	function getShapes(synthShape, tremoloShape) {
+	function getShapes(synthShape) {
 	  if (synthShape === 'sine') (0, _jquery2.default)('#circle').addClass('clicked');else if (synthShape === 'triangle') (0, _jquery2.default)('#triangle').addClass('clicked');else if (synthShape === 'sawtooth') (0, _jquery2.default)('#sawtooth').addClass('clicked');else if (synthShape === 'square') (0, _jquery2.default)('#square').addClass('clicked');
 	}
 
@@ -35219,15 +35199,21 @@
 
 	  function keyboard25() {
 	    keyboard.children().remove();
+	    keyboard.append(addDots(5));
 	    keyboard.append(keys.row1);
+	    updateKeyIDs(3);
+	    (0, _jquery2.default)('#dot-3').addClass('clicked');
 	    (0, _jquery2.default)('.white-keys').addClass('white-25');
 	    (0, _jquery2.default)('.black-keys').addClass('black-25');
 	  }
 
 	  function keyboard49() {
 	    keyboard.children().remove();
+	    keyboard.append(addDots(3));
 	    keyboard.append(keys.row2);
 	    keyboard.append(keys.row1);
+	    updateKeyIDs(2);
+	    (0, _jquery2.default)('#dot-2').addClass('clicked');
 	    (0, _jquery2.default)('.white-keys').addClass('white-49');
 	    (0, _jquery2.default)('.black-keys').addClass('black-49');
 	    (0, _jquery2.default)('.row2').addClass('shift-down-49');
@@ -35235,9 +35221,11 @@
 
 	  function keyboard73() {
 	    keyboard.children().remove();
+	    keyboard.append(addDots(0));
 	    keyboard.append(keys.row3);
 	    keyboard.append(keys.row2);
 	    keyboard.append(keys.row1);
+	    updateKeyIDs(0);
 	    (0, _jquery2.default)('.white-keys').addClass('white-73');
 	    (0, _jquery2.default)('.black-keys').addClass('black-73');
 	    (0, _jquery2.default)('.row3').addClass('shift-down-73-3');
@@ -35248,9 +35236,9 @@
 	    (0, _jquery2.default)('.keyboard-display').find('.choice-box').removeClass('clicked');
 	    (0, _jquery2.default)(this).addClass('clicked');
 	    var num = (0, _jquery2.default)(this).text();
-	    if (num == '25') keyboard25();
-	    if (num == '49') keyboard49();
-	    if (num == '73') keyboard73();
+	    if (num == '1') keyboard25();
+	    if (num == '2') keyboard49();
+	    if (num == '3') keyboard73();
 	  });
 
 	  (function keyListeners() {
@@ -35279,10 +35267,54 @@
 	        hasBeenReleased = true;
 	      }
 	    });
+
+	    keyboard49();
+	    (0, _jquery2.default)('.js-kb49').addClass('clicked');
 	  }
 
-	  keyboard49();
-	  (0, _jquery2.default)('.js-kb49').addClass('clicked');
+	  function addDots(numberOfDots) {
+	    var dots = '<div class="dots-container">';
+	    for (var i = 1; i <= numberOfDots; i++) {
+	      dots += '<div class="dot" id="dot-' + i + '"></div>';
+	    }
+	    if (numberOfDots === 0) dots += '<div class="hidden-dot"></div>';
+	    return dots + '</div>';
+	  }
+
+	  (function addDotListeners() {
+
+	    keyboard.on('click', '#dot-1', function (e) {
+	      updateKeyIDs(1);
+	      (0, _jquery2.default)('.dots-container').children('.clicked').removeClass('clicked');
+	      (0, _jquery2.default)(this).addClass('clicked');
+	    });
+	    keyboard.on('click', '#dot-2', function (e) {
+	      updateKeyIDs(2);
+	      (0, _jquery2.default)('.dots-container').children('.clicked').removeClass('clicked');
+	      (0, _jquery2.default)(this).addClass('clicked');
+	    });
+	    keyboard.on('click', '#dot-3', function (e) {
+	      updateKeyIDs(3);
+	      (0, _jquery2.default)('.dots-container').children('.clicked').removeClass('clicked');
+	      (0, _jquery2.default)(this).addClass('clicked');
+	    });
+	    keyboard.on('click', '#dot-4', function (e) {
+	      updateKeyIDs(4);
+	      (0, _jquery2.default)('.dots-container').children('.clicked').removeClass('clicked');
+	      (0, _jquery2.default)(this).addClass('clicked');
+	    });
+	    keyboard.on('click', '#dot-5', function (e) {
+	      updateKeyIDs(5);
+	      (0, _jquery2.default)('.dots-container').children('.clicked').removeClass('clicked');
+	      (0, _jquery2.default)(this).addClass('clicked');
+	    });
+	  })();
+	}
+
+	function updateKeyIDs(n) {
+	  for (var i = 1; i <= 73; i++) {
+	    (0, _jquery2.default)('.' + i).attr('id', i + (n + 1) * 12);
+	  }
 	}
 
 	module.exports.build = buildKeyboard;

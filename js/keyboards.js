@@ -83,15 +83,21 @@ function buildKeyboard() {
 
   function keyboard25() {
     keyboard.children().remove();
+    keyboard.append(addDots(5));
     keyboard.append(keys.row1);
+    updateKeyIDs(3);
+    $('#dot-3').addClass('clicked');
     $('.white-keys').addClass('white-25');
     $('.black-keys').addClass('black-25');
   }
 
   function keyboard49() {
     keyboard.children().remove();
+    keyboard.append(addDots(3));
     keyboard.append(keys.row2);
     keyboard.append(keys.row1);
+    updateKeyIDs(2);
+    $('#dot-2').addClass('clicked');
     $('.white-keys').addClass('white-49');
     $('.black-keys').addClass('black-49');
     $('.row2').addClass('shift-down-49');
@@ -99,9 +105,11 @@ function buildKeyboard() {
 
   function keyboard73() {
     keyboard.children().remove();
+    keyboard.append(addDots(0));
     keyboard.append(keys.row3);
     keyboard.append(keys.row2);
     keyboard.append(keys.row1);
+    updateKeyIDs(0);
     $('.white-keys').addClass('white-73');
     $('.black-keys').addClass('black-73');
     $('.row3').addClass('shift-down-73-3');
@@ -112,9 +120,9 @@ function buildKeyboard() {
     $('.keyboard-display').find('.choice-box').removeClass('clicked');
     $(this).addClass('clicked');
     let num = $(this).text();
-    if (num == '25') keyboard25();
-    if (num == '49') keyboard49();
-    if (num == '73') keyboard73();
+    if (num == '1') keyboard25();
+    if (num == '2') keyboard49();
+    if (num == '3') keyboard73();
   });
 
   (function keyListeners() {
@@ -145,11 +153,53 @@ function buildKeyboard() {
       }
     });
 
-
-  }
-
   keyboard49();
   $('.js-kb49').addClass('clicked');
+}
+
+function addDots(numberOfDots) {
+  var dots = '<div class="dots-container">';
+  for (var i = 1; i <= numberOfDots; i++) {
+    dots += '<div class="dot" id="dot-' + i + '"></div>';
+  }
+  if (numberOfDots === 0) dots += '<div class="hidden-dot"></div>';
+  return dots + '</div>';
+}
+
+(function addDotListeners() {
+
+  keyboard.on('click', '#dot-1', function(e) {
+    updateKeyIDs(1);
+    $('.dots-container').children('.clicked').removeClass('clicked');
+    $(this).addClass('clicked');
+  });
+  keyboard.on('click', '#dot-2', function(e) {
+    updateKeyIDs(2);
+    $('.dots-container').children('.clicked').removeClass('clicked');
+    $(this).addClass('clicked');
+  });
+  keyboard.on('click', '#dot-3', function(e) {
+    updateKeyIDs(3);
+    $('.dots-container').children('.clicked').removeClass('clicked');
+    $(this).addClass('clicked');
+  });
+  keyboard.on('click', '#dot-4', function(e) {
+    updateKeyIDs(4);
+    $('.dots-container').children('.clicked').removeClass('clicked');
+    $(this).addClass('clicked');
+  });
+  keyboard.on('click', '#dot-5', function(e) {
+    updateKeyIDs(5);
+    $('.dots-container').children('.clicked').removeClass('clicked');
+    $(this).addClass('clicked');
+  });
+})();
+}
+
+function updateKeyIDs(n) {
+  for (var i = 1; i <= 73; i++) {
+    $('.'+i).attr('id', i + (n+1)*12);
+  }
 }
 
 module.exports.build = buildKeyboard;

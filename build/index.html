@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
   <title>Web Synthesizer</title>
+  <script src="//use.edgefonts.net/shuriken-std;play:n7.js"></script>
   <link rel="stylesheet" href="style.css">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
@@ -10,112 +11,131 @@
 
     <header>
 
-      <h1>Web Synth 2000</h1>
+      <div class="first-div-header">
+        <h1>
+          <span class="span-purple">G</span><span class="span-yellow">a</span><span class="span-orange">l</span><span class="span-yellow">a</span><span class="span-orange">x</span><span class="span-yellow">y</span>
+          <span class="span-purple">S</span><span class="span-yellow">y</span><span class="span-orange">n</span><span class="span-yellow">t</span><span class="span-orange">h</span>
+        </h1>
+      </div>
 
-      <div class="keyboard-display">
-        <h3>Keyboard Display</h3>
-        <div>
-          <div class='choice-box'>25</div>
-          <div class='choice-box js-kb49'>49</div>
-          <div class='choice-box'>73</div>
+      <div class="second-div-header">
+        <div class="keyboard-display">
+          <h2>Keyboard Rows</h2>
+          <div>
+            <div class='choice-box'>1</div>
+            <div class='choice-box js-kb49'>2</div>
+            <div class='choice-box'>3</div>
+          </div>
+        </div>
+
+        <div class="keyboard-input">
+          <h2>MIDI Keyboard Input</h2>
+          <div>
+            <div class="keyboard-input-name"></div>
+            <div id="keyboard-reload">&#8629;</div>
+          </div>
+        </div>
+
+        <div class="load">
+          <h2>Sound Patch</h2>
+          <div>
+            <div id="load-left">&#9664;</div>
+            <div class="load-name-box"></div>
+            <div id="load-right">&#9654;</div>
+          </div>
         </div>
       </div>
-
-      <div class="keyboard-input">
-        <h3>MIDI Keyboard Input</h3>
-        <h2 class="keyboard-input-name"></h2>
-      </div>
-
-      <div class="load">
-        <h3>Load</h3>
-      </div>
-
-      <div class="save">
-        <h3>Save</h3>
-      </div>
-
     </header>
 
 
     <div class="controls">
 
-      <div class="main-controls">
-        <div>
-          <h3>Shape</h3>
-          <div class="choice-box-container">
-            <div class='choice-box' id="circle">C</div>
-            <div class='choice-box' id="triangle">T</div>
-            <div class='choice-box' id="sawtooth">W</div>
-            <div class='choice-box' id="square">S</div>
+      <div class="first-div">
+
+        <div class="main-controls">
+          <div>
+            <h3>Shape</h3>
+            <div class="choice-box-container">
+              <div class='choice-box' id="circle">&#9679;</div>
+              <div class='choice-box' id="triangle">&#9650;</div>
+              <div class='choice-box' id="sawtooth">&#9698;</div>
+              <div class='choice-box' id="square">&#9632;</div>
+            </div>
+          </div>
+          <div>
+            <h3>Volume</h3>
+            <div class="slider" id="volume"></div>
+          </div>
+          <div>
+            <h3>Reverb</h3>
+            <div class="slider" id="reverb"></div>
           </div>
         </div>
-        <div>
-          <h3>Volume</h3>
-          <div class="slider" id="volume"></div>
+
+        <div class="spacer-div"></div>
+
+        <div class="envelope">
+          <div><h2>Envelope</h2></div>
+          <div>
+            <h3>Attack</h3>
+            <div class="slider" id="attack"></div>
+          </div>
+          <div>
+            <h3>Decay</h3>
+            <div class="slider" id="decay"></div>
+          </div>
+          <div>
+            <h3>Sustain</h3>
+            <div class="slider" id="sustain"></div>
+          </div>
+          <div>
+            <h3>Release</h3>
+            <div class="slider" id="release"></div>
+          </div>
         </div>
-        <div>
-          <h3>Reverb</h3>
-          <div class="slider" id="reverb"></div>
-        </div>
+        <div class="spacer-div"></div>
       </div>
 
 
-      <div class="envelope">
-        <div><h2>Envelope</h2></div>
-        <div>
-          <h3>Attack</h3>
-          <div class="slider" id="attack"></div>
+      <div class="second-div">
+        <div class="chorus">
+          <div><h2>Chorus</h2></div>
+          <div>
+            <h3>Depth</h3>
+            <div class="slider" id="chorus-depth"></div>
+          </div>
+          <div>
+            <h3>Delay</h3>
+            <div class="slider" id="chorus-delay"></div>
+          </div>
+          <div>
+            <h3>Freq</h3>
+            <div class="slider" id="chorus-frequency"></div>
+          </div>
         </div>
-        <div>
-          <h3>Decay</h3>
-          <div class="slider" id="decay"></div>
-        </div>
-        <div>
-          <h3>Sustain</h3>
-          <div class="slider" id="sustain"></div>
-        </div>
-        <div>
-          <h3>Release</h3>
-          <div class="slider" id="release"></div>
-        </div>
-      </div>
 
-
-      <div class="bitcrusher">
-        <div><h2>Bit Crusher</h2></div>
-        <div>
-          <h3>Bits</h3>
-          <div class= "slider" id="bits"></div>
+        <div class="bitcrusher">
+          <div><h2>Crusher</h2></div>
+          <div>
+            <h3>Bits</h3>
+            <div class= "slider" id="bits"></div>
+          </div>
+          <div>
+            <h3>Filter</h3>
+            <div class= "slider" id="filter"></div>
+          </div>
         </div>
-        <div>
-          <h3>Filter</h3>
-          <div class= "slider" id="filter"></div>
-        </div>
-      </div>
 
-
-      <div class="delay">
-        <div><h2>Delay</h2></div>
-        <div>
-          <h3>Time</h3>
-          <div class="slider" id="delay-time"></div>
-        </div>
-        <div>
-          <h3>Feedback</h3>
-          <div class="slider" id="delay-feedback"></div>
-        </div>
-      </div>
-
-
-      <div class="tremolo">
-        <div><h2>Tremelo</h2></div>
-        <div>
-          <h3>Depth</h3>
-          <div class="slider" id="tremolo-depth"></div>
-        </div>
-        <div>
-          <h3>Frequency</h3>
-          <div class="slider" id="tremolo-frequency"></div>
+        <div class="delay">
+          <div><h2>Delay</h2></div>
+          <div>
+            <h3>Time</h3>
+            <div class="slider" id="delay-time"></div>
+          </div>
+          <div>
+            <h3>Feedback</h3>
+            <div class="slider" id="delay-feedback"></div>
+          </div>
         </div>
       </div>
     </div>

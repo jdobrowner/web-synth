@@ -27,7 +27,7 @@ function addListeners(input) {
 
   input.addListener('noteon', "all", function (e) {
         var note = matchingKeyID(e.note.name, e.note.octave);
-        var $key = $('.' + note.id);
+        var $key = $('.keys').find('#' + note.id);
         $key.addClass(note.letter + '-color');
 
         synth.trigger.emit('trigger', e.note.name + (e.note.octave + 4));
@@ -35,7 +35,7 @@ function addListeners(input) {
     );
   input.addListener('noteoff', "all", function (e) {
         var note = matchingKeyID(e.note.name, e.note.octave);
-        var $key = $('.' + note.id);
+        var $key = $('.keys').find('#' + note.id);
         $key.removeClass(note.letter + '-color');
 
         synth.trigger.emit('release', e.note.name + (e.note.octave + 4));

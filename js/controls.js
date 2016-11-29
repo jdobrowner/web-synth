@@ -32,7 +32,7 @@ function init(sound) {
 
 function getControls(settings) {
 
-  getShapes(settings.master.shape, settings.tremolo.shape);
+  getShapes(settings.master.shape);
 
   var controls = [
     createControl('volume', 100, settings.master.volume),
@@ -45,8 +45,9 @@ function getControls(settings) {
     createControl('filter', 100, settings.crusher.filter),
     createControl('delay-time', 100, settings.delay.time),
     createControl('delay-feedback', 100, settings.delay.feedback),
-    createControl('tremolo-depth', 100, settings.tremolo.depth),
-    createControl('tremolo-frequency', 100, settings.tremolo.frequency)
+    createControl('chorus-depth', 100, settings.chorus.depth),
+    createControl('chorus-frequency', 100, settings.chorus.frequency),
+    createControl('chorus-delay', 100, settings.chorus.delay)
   ];
   return controls;
 }
@@ -94,7 +95,7 @@ function shapeControlListeners() {
   });
 }
 
-function getShapes(synthShape, tremoloShape) {
+function getShapes(synthShape) {
   if (synthShape === 'sine') $('#circle').addClass('clicked');
   else if (synthShape === 'triangle') $('#triangle').addClass('clicked');
   else if (synthShape === 'sawtooth') $('#sawtooth').addClass('clicked');

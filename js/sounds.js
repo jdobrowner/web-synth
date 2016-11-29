@@ -6,19 +6,19 @@ function settings() {
   var envelope = new Envelope(5, 50, 50, 5);
   var crusher = new Crusher(100, 0);
   var delay = new Delay(50, 0);
-  var tremolo = new Tremolo('sawtooth', 0, 50);
-  var sound = new ControlSettings('poo sound', master, envelope, crusher, delay, tremolo);
+  var chorus = new Chorus(50, 50, 50);
+  var sound = new ControlSettings('poo sound', master, envelope, crusher, delay, chorus);
 
   return sound;
 }
 
-function ControlSettings(name, master, envelope, crusher, delay, tremolo) {
+function ControlSettings(name, master, envelope, crusher, delay, chorus) {
   this.name = name;
   this.master = master;
   this.envelope = envelope;
   this.crusher = crusher;
   this.delay = delay;
-  this.tremolo = tremolo;
+  this.chorus = chorus;
 }
 
 function MasterControls(shape, volume, reverb) {
@@ -44,10 +44,10 @@ function Delay(time, feedback) {
   this.feedback = feedback;
 }
 
-function Tremolo(shape, depth, frequency) {
-  this.shape = shape;
+function Chorus(depth, frequency, delay) {
   this.depth = depth;
   this.frequency = frequency;
+  this.delay = delay;
 }
 
 module.exports.settings = settings;

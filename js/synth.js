@@ -8,48 +8,21 @@ var loadPatch;
 
 function synthInit(controls) {
 
-  console.log(controls);
-
-  var sourceOptions = {
-    oscillator: { type: controls.master.shape },
-    envelope: {
-      attack: normalizeEnvelope(controls.envelope.attack),
-      decay: normalizeEnvelope(controls.envelope.decay),
-      sustain: normalizeEnvelope(controls.envelope.sustain),
-      release: normalizeEnvelope(controls.envelope.release)
-    }
-  };
-
-  var synth1 = new Tone.Synth(sourceOptions);
-  var synth2 = new Tone.Synth(sourceOptions);
-  var synth3 = new Tone.Synth(sourceOptions);
-  var synth4 = new Tone.Synth(sourceOptions);
-  var synth5 = new Tone.Synth(sourceOptions);
-  var synth6 = new Tone.Synth(sourceOptions);
-  var synth7 = new Tone.Synth(sourceOptions);
-  var synth8 = new Tone.Synth(sourceOptions);
+  var synth1 = new Tone.Synth();
+  var synth2 = new Tone.Synth();
+  var synth3 = new Tone.Synth();
+  var synth4 = new Tone.Synth();
+  var synth5 = new Tone.Synth();
+  var synth6 = new Tone.Synth();
+  var synth7 = new Tone.Synth();
+  var synth8 = new Tone.Synth();
   var synthArray = [synth1, synth2, synth3, synth4, synth5, synth6, synth7, synth8];
-
-  console.log(synth1);
-
-  // var distortion = new Tone.BitCrusher( normalizeBits(controls.crusher.bits) );
-  // var reverb = new Tone.Freeverb( { roomSize: normalizeMaster(controls.master.reverb) } );
-  // var volume = new Tone.Volume( normalizeVolume(controls.master.volume) );
-  // var delay = new Tone.FeedbackDelay( { delayTime: normalizeDelayTime(controls.delay.time),
-  //                                       feedback: normalizeDelayFeedback(controls.delay.feedback),
-  //                                       wet: 0
-  //                                     });
-  // var tremolo = new Tone.Tremolo( { frequency: normalizeTremoloFrequency(controls.tremolo.frequency),
-  //                                   type: 'sine',
-  //                                   depth: normalizeTremoloDepth(controls.tremolo.depth),
-  //                                   spread: 0 } ).start();
-  // var compressor = new Tone.Compressor(-30, 3);
 
   var distortion = new Tone.BitCrusher();
   var reverb = new Tone.Freeverb();
   var volume = new Tone.Volume();
   var delay = new Tone.FeedbackDelay( { wet: 0 });
-  var tremolo = new Tone.Tremolo( { type: 'sine', spread: 0 } ).start();
+  var chorus = new Tone.Chorus();
   var compressor = new Tone.Compressor(-30, 3);
 
   function loadSoundPatch(controls) {
@@ -57,25 +30,26 @@ function synthInit(controls) {
       s.oscillator.type = controls.master.shape;
       s.envelope.attack = normalizeEnvelope(controls.envelope.attack);
       s.envelope.decay = normalizeEnvelope(controls.envelope.decay);
-      s.envelope.sustain = normalizeEnvelope(controls.envelope.sustain);
+      s.envelope.sustain = normalizeSustain(controls.envelope.sustain);
       s.envelope.release = normalizeEnvelope(controls.envelope.release);
     });
     volume.volume.input.value = normalizeVolume(controls.master.volume);
-    reverb.roomSize.input.value = normalizeMaster(controls.master.reverb);
+    reverb.roomSize.input.value = normalizeReverb(controls.master.reverb);
     distortion.bits = normalizeBits(controls.crusher.bits);
     distortion.wet.value = normalizeFilter(controls.crusher.filter);
     delay.delayTime.value = normalizeDelayTime(controls.delay.time);
     var v = normalizeDelayFeedback(controls.delay.feedback);
     delay.feedback.value = v * 0.8;
     delay.wet.value = v * 0.5;
-    tremolo.depth.value = normalizeTremoloDepth(controls.tremolo.depth);
-    tremolo.frequency.value = normalizeTremoloFrequency(controls.tremolo.frequency);
+    chorus.depth = normalizeChorusDepth(controls.chorus.depth);
+    chorus.frequency.value = normalizeChorusFrequency(controls.chorus.frequency);
+    chorus.delayTime = normalizeDelayTime(controls.chorus.delay);
   }
   loadSoundPatch(controls);
   loadPatch = loadSoundPatch; // to be exported and used when a different sound patch is chosen
 
   synthArray.forEach( function(s) {
-    s.chain(distortion, compressor, tremolo, delay, reverb, volume, Tone.Master);
+    s.chain(chorus, distortion, compressor, delay, reverb, volume, Tone.Master);
   });
 
   var synthStack = {
@@ -203,7 +177,7 @@ function synthInit(controls) {
         updateVolume(val);
         break;
       case 'reverb':
-        val = normalizeMaster(value);
+        val = normalizeReverb(value);
         updateReverb(val);
         break;
       case 'attack':
@@ -215,7 +189,7 @@ function synthInit(controls) {
         updateDecay(val);
         break;
       case 'sustain':
-        val = normalizeEnvelope(value);
+        val = normalizeSustain(value);
         updateSustain(val);
         break;
       case 'release':
@@ -238,27 +212,29 @@ function synthInit(controls) {
         val = normalizeDelayFeedback(value);
         updateDelayFeedback(val);
         break;
-      case 'tremolo-depth':
-        val = normalizeTremoloDepth(value);
-        updateTremoloDepth(val);
+      case 'chorus-depth':
+        val = normalizeChorusDepth(value);
+        updateChorusDepth(val);
         break;
-      case 'tremolo-frequency':
-        val = normalizeTremoloFrequency(value);
-        updateTremoloFrequency(val);
+      case 'chorus-frequency':
+        val = normalizeChorusFrequency(value);
+        updateChorusFrequency(val);
+        break;
+      case 'chorus-delay':
+        val = normalizeDelayTime(value);
+        updateChorusDelay(val);
         break;
       default: break;
     }
   }
 
   function updateShape(v) {
-
     synthArray.forEach( function(s) { s.oscillator.type = v; }); }
   function updateVolume(v) {
-    console.log( volume );
+    console.log( 'volume', v );
     synthArray.forEach( function(s) { volume.volume.input.value = v; }); }
   function updateReverb(v) {
     console.log('reverb = ' + v);
-    console.log( reverb );
     synthArray.forEach( function(s) { reverb.roomSize.input.value = v; });
   }
   function updateAttack(v) {
@@ -279,12 +255,10 @@ function synthInit(controls) {
   }
   function updateBits(v) {
     console.log( 'bits = ' + v );
-    console.log( distortion );
     synthArray.forEach( function(s) { distortion.bits = v; });
   }
   function updateFilter(v) {
     console.log( 'filter = ' + v );
-    console.log( distortion );
     synthArray.forEach( function(s) { distortion.wet.value = v; });
   }
   function updateDelayTime(v) {
@@ -294,33 +268,35 @@ function synthInit(controls) {
   }
   function updateDelayFeedback(v) {
     console.log( 'delay feedback = ' + v );
-    console.log( delay );
     synthArray.forEach( function(s) {
       delay.feedback.value = v * 0.8;
       delay.wet.value = v * 0.5;
     });
   }
-  function updateTremoloDepth(v) {
-    console.log( 'tremolo depth = ' + v );
-    console.log(tremolo);
-    synthArray.forEach( function(s) { tremolo.depth.value = v; });
+  function updateChorusDepth(v) {
+    console.log( 'chorus depth = ' + v );
+    synthArray.forEach( function(s) { chorus.depth = v; });
   }
-  function updateTremoloFrequency(v) {
-    console.log( 'tremolo freq = ' + v );
-    console.log(tremolo);
-    synthArray.forEach( function(s) { tremolo.frequency.value = v; });
+  function updateChorusFrequency(v) {
+    console.log( 'chorus freq = ' + v );
+    synthArray.forEach( function(s) { chorus.frequency.value = v; });
+  }
+  function updateChorusDelay(v) {
+    console.log( 'chorus freq = ' + v );
+    synthArray.forEach( function(s) { chorus.delayTime = v; });
   }
 }
 
-function normalizeVolume(v) { return (v) * 0.02; } // range ? logarithmic function
-function normalizeMaster(v) { return v * 0.01; } // range [0, 1]
-function normalizeEnvelope(v) { return v * 0.03; } // range [0, 3]
+function normalizeVolume(v) { return (v) * 0.0035; } // range [0, 0.35]
+function normalizeReverb(v) { return (v) * 0.009; } //  range [0, 0.9]
+function normalizeEnvelope(v) { return v * 0.04 + 0.01; } // range [0.01, 4.01]
+function normalizeSustain(v) { return v * 0.01; } // range [0, 1]
 function normalizeBits(v) { return Math.ceil(v * 0.07 + 0.1); } // range [2, 12] integers
 function normalizeFilter(v) { return v * 0.01; } // range [0, 1]
-function normalizeDelayTime(v) { return v * 0.01; } // range [0, 1]
+function normalizeDelayTime(v) { return v * 0.009; } // range [0, 1]
 function normalizeDelayFeedback(v) { return v * 0.01; } // range [0, 1]
-function normalizeTremoloDepth(v) { return v * 0.01; } // range [0, 1]
-function normalizeTremoloFrequency(v) { return (v * 0.1) + 1; } // range [1, 11]
+function normalizeChorusDepth(v) { return v * 0.01; } // range [0, 1]
+function normalizeChorusFrequency(v) { return (v * 0.07) + 1; } // range [1, 8]
 
 module.exports.init = synthInit;
 module.exports.trigger = toneTrigger;

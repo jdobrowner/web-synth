@@ -1,0 +1,39 @@
+@red: #d0644d;
+@blue: #07617D;
+@orange: #F9A828;
+
+.border() {
+  border: 2px solid @black;
+}
+
+.controls {
+
+  .ui-slider-handle {
+    border-radius: 50%;
+    //.border;
+    //border: 3px solid @orange;
+    border: none;
+    width: 30px;
+    height: 30px;
+    left: -12.5px;
+    margin-bottom: -13.5px;
+    background-color: @orange;
+    cursor: pointer;
+  }
+
+  .ui-slider {
+    background: @black;
+    width: 6px;
+    height: 140px;
+    border: none;
+  }
+
+  .ui-slider-range {
+    background: @black;
+  }
+
+  .ui-state-focus {
+    outline: none;
+  }
+
+}
