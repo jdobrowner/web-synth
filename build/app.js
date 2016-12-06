@@ -101,7 +101,6 @@
 	  var galaxySound = soundSetting[galaxy];
 	  controls.init(galaxySound);
 	  (0, _jquery2.default)('.load-name-box').html(galaxySound.name);
-	  //synth.load(galaxySound);
 	}
 
 	function circulateNum(n) {
@@ -136,23 +135,34 @@
 
 	function midiInit() {
 
-	  var WebMidi = __webpack_require__(6);
+	  try {
+	    var WebMidi;
 
-	  function loadMidiDevice() {
-	    var input;
-	    WebMidi.disable();
-	    WebMidi.enable(function (err) {
-	      if (err) {} else {
-	        input = WebMidi.inputs[0];
-	        if (typeof input !== 'undefined') addListeners(input);else (0, _jquery2.default)('.keyboard-input-name').text('No Input Device Found');
-	      }
-	    });
+	    (function () {
+	      var loadMidiDevice = function loadMidiDevice() {
+	        var input;
+	        WebMidi.disable();
+	        WebMidi.enable(function (err) {
+	          if (err) {} else {
+	            input = WebMidi.inputs[0];
+	            if (typeof input !== 'undefined') addListeners(input);else (0, _jquery2.default)('.keyboard-input-name').text('No Input Device Found');
+	          }
+	        });
+	      };
+
+	      WebMidi = __webpack_require__(6);
+
+	      loadMidiDevice();
+
+	      (0, _jquery2.default)('#keyboard-reload').click(function () {
+	        loadMidiDevice();
+	      });
+	    })();
+	  } catch (e) {
+	    (0, _jquery2.default)('.synth').prepend('<div class="shitty-browser"></div>');
+	    (0, _jquery2.default)('.shitty-browser').text('Your browser does not support the Web Midi API. Use Google Chrome to input a MIDI keyboard.');
+	    (0, _jquery2.default)('.keyboard-input-name').text('Try Google Chrome');
 	  }
-	  loadMidiDevice();
-
-	  (0, _jquery2.default)('#keyboard-reload').click(function () {
-	    loadMidiDevice();
-	  });
 	}
 
 	function addListeners(input) {
@@ -253,14 +263,23 @@
 
 	'use strict';
 
-	var Tone = __webpack_require__(3);
+	var Tone;
 	var EventEmitter = __webpack_require__(4);
 	var toneTrigger = new EventEmitter();
 	var controller = new EventEmitter();
 
+	function synthInit(controls) {
+	  try {
+	    Tone = __webpack_require__(3);
+	    synthSetup(controls);
+	  } catch (e) {
+	    $('.shitty-browser').text('Your browser does not support the Web Audio API. Use a recent version of Google Chrome.');
+	  }
+	}
+
 	var loadPatch;
 
-	function synthInit(controls) {
+	function synthSetup(controls) {
 
 	  var synth1 = new Tone.Synth();
 	  var synth2 = new Tone.Synth();
@@ -35323,10 +35342,10 @@
 	        hasBeenReleased = true;
 	      }
 	    });
-
-	    keyboard49();
-	    (0, _jquery2.default)('.js-kb49').addClass('clicked');
 	  }
+
+	  keyboard49();
+	  (0, _jquery2.default)('.js-kb49').addClass('clicked');
 
 	  function addDots(numberOfDots) {
 	    var dots = '<div class="dots-container">';

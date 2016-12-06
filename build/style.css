@@ -183,8 +183,8 @@ body {
 }
 header {
   z-index: 2;
-  width: 88%;
-  margin: 50px 0;
+  width: 84%;
+  margin: 70px 0 50px 0;
   display: flex;
   justify-content: center;
 }
@@ -205,6 +205,7 @@ header > div > div > div {
 }
 .first-div-header {
   width: 45%;
+  padding-top: 10px;
 }
 .second-div-header {
   width: 55%;
@@ -222,16 +223,16 @@ header > div > div > div {
   color: #757a6f;
 }
 #circle {
-  font-size: 27px;
+  font-size: 1.6em;
 }
 #triangle {
-  font-size: 18px;
+  font-size: 1.25em;
 }
 #sawtooth {
-  font-size: 12px;
+  font-size: 0.8em;
 }
 #square {
-  font-size: 28px;
+  font-size: 1.75em;
 }
 h3 {
   text-align: center;
@@ -240,7 +241,7 @@ h3 {
 .controls {
   display: flex;
   justify-content: space-between;
-  width: 88%;
+  width: 84%;
   margin-bottom: 80px;
   margin-top: 30px;
 }
@@ -334,11 +335,11 @@ h3 {
 }
 #load-left,
 #load-right {
-  font-size: 12px;
-  line-height: 28px;
+  font-size: 1em;
+  line-height: 26px;
 }
 #keyboard-reload {
-  font-size: 20px;
+  font-size: 1.2em;
   line-height: 32px;
 }
 #keyboard-reload:active,
@@ -2822,14 +2823,13 @@ body {
   justify-content: space-between;
   border-radius: 12px;
   width: 100%;
-  margin-top: 20px;
   background-color: #757a6f;
 }
 h1 {
   font-size: 4.2em;
   font-family: shuriken-std, sans-serif;
   font-weight: bold;
-  -webkit-text-stroke: 2px #ECECEB;
+  -webkit-text-stroke: 2.5px #ECECEB;
 }
 h2 {
   font-size: 1.4em;
@@ -2861,4 +2861,13 @@ header h2 {
 }
 .dots-container .clicked {
   border-radius: 50%;
+}
+.shitty-browser {
+  width: 100%;
+  padding: 12px;
+  background-color: #353630;
+  color: #d17336;
+  text-align: center;
+  font-size: 1em;
+  line-height: 1.2em;
 }

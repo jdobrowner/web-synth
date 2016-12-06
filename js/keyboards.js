@@ -153,10 +153,10 @@ function buildKeyboard() {
         hasBeenReleased = true;
       }
     });
-
-  keyboard49();
-  $('.js-kb49').addClass('clicked');
 }
+
+keyboard49();
+$('.js-kb49').addClass('clicked');
 
 function addDots(numberOfDots) {
   var dots = '<div class="dots-container">';

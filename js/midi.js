@@ -3,27 +3,35 @@ import $ from "jquery";
 
 function midiInit() {
 
-  var  WebMidi = require('webmidi');
+  try {
+    var  WebMidi = require('webmidi');
 
 
-  function loadMidiDevice() {
-    var input;
-    WebMidi.disable();
-    WebMidi.enable(function (err) {
-      if (err) {}
-      else {
-        input = WebMidi.inputs[0];
-        if (typeof input !== 'undefined') addListeners(input);
-        else $('.keyboard-input-name').text('No Input Device Found');
-      }
+    function loadMidiDevice() {
+      var input;
+      WebMidi.disable();
+      WebMidi.enable(function (err) {
+        if (err) {}
+        else {
+          input = WebMidi.inputs[0];
+          if (typeof input !== 'undefined') addListeners(input);
+          else $('.keyboard-input-name').text('No Input Device Found');
+        }
+      });
+    }
+    loadMidiDevice();
+
+    $('#keyboard-reload').click( function() {
+      loadMidiDevice();
     });
   }
-  loadMidiDevice();
-
-  $('#keyboard-reload').click( function() {
-    loadMidiDevice();
-  });
+  catch(e) {
+    $('.synth').prepend('<div class="shitty-browser"></div>');
+    $('.shitty-browser').text('Your browser does not support the Web Midi API. Use Google Chrome to input a MIDI keyboard.');
+    $('.keyboard-input-name').text('Try Google Chrome');
+  }
 }
+
 
 function addListeners(input) {
   $('.keyboard-input-name').text(input._midiInput.name);

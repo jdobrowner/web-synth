@@ -1,11 +1,23 @@
-var Tone = require('Tone');
+var Tone;
 var EventEmitter = require('events');
 var toneTrigger = new EventEmitter();
 var controller = new EventEmitter();
 
+function synthInit(controls) {
+  try {
+    Tone = require('Tone');
+    synthSetup(controls);
+  }
+  catch(e) {
+    $('.shitty-browser').text('Your browser does not support the Web Audio API. Use a recent version of Google Chrome.');
+  }
+}
+
+
+
 var loadPatch;
 
-function synthInit(controls) {
+function synthSetup(controls) {
 
   var synth1 = new Tone.Synth();
   var synth2 = new Tone.Synth();
