@@ -159,7 +159,7 @@ keyboard49();
 $('.js-kb49').addClass('clicked');
 
 function addDots(numberOfDots) {
-  var dots = '<div class="dots-container">';
+  var dots = '<div class="dots-container" style="height:3px;">';
   for (var i = 1; i <= numberOfDots; i++) {
     dots += '<div class="dot" id="dot-' + i + '"></div>';
   }

@@ -5,10 +5,12 @@ var controller = new EventEmitter();
 
 function synthInit(controls) {
   try {
+    console.log('in try');
     Tone = require('Tone');
     synthSetup(controls);
   }
   catch(e) {
+    console.log('in catch');
     $('.shitty-browser').text('Your browser does not support the Web Audio API. Use a recent version of Google Chrome.');
   }
 }
@@ -62,6 +64,8 @@ function synthSetup(controls) {
   synthArray.forEach( function(s) {
     s.chain(chorus, distortion, compressor, delay, reverb, volume, Tone.Master);
   });
+
+  console.log(synth1);
 
   var synthStack = {
     synth1: '',
