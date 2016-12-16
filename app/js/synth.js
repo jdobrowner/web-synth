@@ -4,18 +4,13 @@ var toneTrigger = new EventEmitter();
 var controller = new EventEmitter();
 
 function synthInit(controls) {
+
   try {
-    console.log('in try');
     Tone = require('Tone');
     synthSetup(controls);
   }
-  catch(e) {
-    console.log('in catch');
-    $('.shitty-browser').text('Your browser does not support the Web Audio API. Use a recent version of Google Chrome.');
-  }
+  catch(e) {}
 }
-
-
 
 var loadPatch;
 
@@ -64,8 +59,6 @@ function synthSetup(controls) {
   synthArray.forEach( function(s) {
     s.chain(chorus, distortion, compressor, delay, reverb, volume, Tone.Master);
   });
-
-  console.log(synth1);
 
   var synthStack = {
     synth1: '',
@@ -188,67 +181,54 @@ function synthSetup(controls) {
         updateShape(value);
         break;
       case 'volume':
-        console.log( 'volume', value );
         val = normalizeVolume(value);
         updateVolume(val);
         break;
       case 'reverb':
-        console.log( 'reverb', value );
         val = normalizeReverb(value);
         updateReverb(val);
         break;
       case 'attack':
-        console.log( 'attack', value );
         val = normalizeEnvelope(value);
         updateAttack(val);
         break;
       case 'decay':
-        console.log( 'decay', value );
         val = normalizeEnvelope(value);
         updateDecay(val);
         break;
       case 'sustain':
-        console.log( 'sustain', value );
         val = normalizeSustain(value);
         updateSustain(val);
         break;
       case 'release':
-        console.log( 'release', value );
         val = normalizeEnvelope(value);
         updateRelease(val);
         break;
       case 'bits':
-        console.log( 'bits', value );
         val = normalizeBits(value);
         updateBits(val);
         break;
       case 'filter':
-        console.log( 'filter', value );
         val = normalizeFilter(value);
         updateFilter(val);
         break;
       case 'delay-time':
-        console.log( 'delay time', value );
         val = normalizeDelayTime(value);
         updateDelayTime(val);
         break;
       case 'delay-feedback':
-        console.log( 'delay feedback', value );
         val = normalizeDelayFeedback(value);
         updateDelayFeedback(val);
         break;
       case 'chorus-depth':
-        console.log( 'chorus depth', value );
         val = normalizeChorusDepth(value);
         updateChorusDepth(val);
         break;
       case 'chorus-frequency':
-        console.log( 'chorus frequency', value );
         val = normalizeChorusFrequency(value);
         updateChorusFrequency(val);
         break;
       case 'chorus-delay':
-        console.log( 'chorus delay', value );
         val = normalizeDelayTime(value);
         updateChorusDelay(val);
         break;

@@ -27,8 +27,19 @@ function midiInit() {
   }
   catch(e) {
     $('.synth').prepend('<div class="shitty-browser"></div>');
-    $('.shitty-browser').text('Your browser does not support the Web Midi API. Use Google Chrome to input a MIDI keyboard.');
     $('.keyboard-input-name').text('Try Google Chrome');
+
+    var isChrome = /Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor);
+    var isSafari = /Safari/.test(navigator.userAgent) && /Apple Computer/.test(navigator.vendor);
+
+    var browserText;
+    if (!isChrome && !isSafari) {
+      browserText = 'Your browser does not support ToneJS. To hear any sound use a recent version of Google Chrome.';
+    }
+    else {
+      browserText = 'Your browser does not support the Web Midi API. Use Google Chrome to input a MIDI keyboard.';
+    }
+    $('.shitty-browser').text(browserText);
   }
 }
 

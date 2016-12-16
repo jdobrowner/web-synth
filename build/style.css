@@ -163,12 +163,13 @@ body {
 .black-keys .Gs-color {
   background-color: #785a93;
 }
-.dots-container {
+.keyboard .dots-container {
+  height: 0px;
   display: flex;
   justify-content: center;
   align-items: center;
 }
-.dots-container .hidden-dot {
+.keyboard .dots-container .hidden-dot {
   height: 24px;
   width: 24px;
 }
