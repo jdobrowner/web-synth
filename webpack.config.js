@@ -4,6 +4,9 @@ var webpack = require('webpack');
 
 var packageData = require('./package.json');
 
+plugins = [];
+plugins.push(new webpack.optimize.UglifyJsPlugin());
+
 module.exports = {
     entry: path.resolve(__dirname, packageData.main),
     output: {
@@ -21,5 +24,6 @@ module.exports = {
           }
         }
       ]
-    }
+    },
+    plugins: plugins
 };

@@ -6,7 +6,7 @@
   "scripts": {
     "build": "rm -rf build && mkdir -p build && npm run build:static && npm run build:html && npm run build:css && npm run build:js",
     "build:html": "rm -f build/index.html && cp app/index.html build/",
-    "build:css": "rm -f build/style.css && lessc app/styles/style.less build/style.css",
+    "build:css": "rm -f build/style.css && lessc app/styles/style.less --clean-css build/style.css",
     "build:js": "rm -f build/app.js && webpack",
     "build:static": "cp -r app/static/* build",
     "watch": "npm run build:static && npm run watch:css & npm run watch:html & npm run watch:js",
@@ -31,7 +31,10 @@
     "chokidar": "^1.6.1",
     "chokidar-cmd": "^1.2.1",
     "less": "^2.7.1",
-    "webpack": "^1.13.3"
+    "less-plugin-clean-css": "^1.5.1",
+    "uglify-js": "^2.7.5",
+    "webpack": "^1.13.3",
+    "webpack-obfuscator": "^0.8.3"
   },
   "dependencies": {
     "jquery": "^3.1.1",
