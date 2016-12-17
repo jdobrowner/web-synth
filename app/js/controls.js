@@ -27,7 +27,7 @@ function init(sound) {
       });
     shapeControlListeners();
   }
-  
+
   var controls = getControls(sound);
   controls.forEach( function(control) { setUpSlider(control); });
 }
@@ -35,6 +35,7 @@ function init(sound) {
 function getControls(settings) {
 
   getShapes(settings.master.shape);
+  synth.controller.emit('change', 'shape', settings.master.shape);
 
   var controls = [
     createControl('volume', 100, settings.master.volume),

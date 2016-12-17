@@ -12,8 +12,6 @@ function synthInit(controls) {
   catch(e) {}
 }
 
-var loadPatch;
-
 function synthSetup(controls) {
 
   var synth1 = new Tone.Synth();
@@ -54,7 +52,6 @@ function synthSetup(controls) {
     chorus.delayTime = normalizeDelayTime(controls.chorus.delay);
   }
   loadSoundPatch(controls);
-  loadPatch = loadSoundPatch; // to be exported and used when a different sound patch is chosen
 
   synthArray.forEach( function(s) {
     s.chain(chorus, distortion, compressor, delay, reverb, volume, Tone.Master);
