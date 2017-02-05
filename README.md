@@ -15,9 +15,13 @@ After you clone the project just `npm install` and `npm start` to run the dev-se
 Make a new sound patch by navigating to `app/js/sounds.js`. Start by making new instances of the effects settings (the number value arguments range from 0 to 100 and represent the knob position on the control slider, eg: 0 is no volume, 100 is full volume). Here is the code for the 'Milky Way' sound patch.
 
 `var master_MW = new MasterControls('sine', 65, 35);`
+
 `var envelope_MW = new Envelope(30, 90, 20, 50);`
+
 `var crusher_MW = new Crusher(100, 0);`
+
 `var delay_MW = new Delay(35, 80);`
+
 `var chorus_MW = new Chorus(0, 0, 0);`
 
 Then make a new `ControlSettings` instance, passing the title of the sound patch as the first argument and the effects instances as the following arguments in the order shown.
