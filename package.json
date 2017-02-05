@@ -4,6 +4,7 @@
   "description": "A web based synthesizer",
   "main": "app/js/index.js",
   "scripts": {
+    "start": "node ./node_modules/webpack-dev-server/bin/webpack-dev-server.js",
     "build": "rm -rf build && mkdir -p build && npm run build:static && npm run build:html && npm run build:css && npm run build:js",
     "build:html": "rm -f build/index.html && cp app/index.html build/",
     "build:css": "rm -f build/style.css && lessc app/styles/style.less --clean-css build/style.css",
@@ -33,7 +34,8 @@
     "less": "^2.7.1",
     "less-plugin-clean-css": "^1.5.1",
     "uglify-js": "^2.7.5",
-    "webpack": "^1.13.3",
+    "webpack": "^2.2.1",
+    "webpack-dev-server": "^2.3.0",
     "webpack-obfuscator": "^0.8.3"
   },
   "dependencies": {
