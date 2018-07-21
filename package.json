@@ -4,16 +4,17 @@
   "description": "A web based synthesizer",
   "main": "app/js/index.js",
   "scripts": {
-    "start": "node ./node_modules/webpack-dev-server/bin/webpack-dev-server.js",
+    "start": "npm run watch & node ./node_modules/webpack-dev-server/bin/webpack-dev-server.js",
     "build": "rm -rf build && mkdir -p build && npm run build:static && npm run build:html && npm run build:css && npm run build:js",
     "build:html": "rm -f build/index.html && cp app/index.html build/",
     "build:css": "rm -f build/style.css && lessc app/styles/style.less --clean-css build/style.css",
     "build:js": "rm -f build/app.js && webpack",
     "build:static": "cp -r app/static/* build",
-    "watch": "npm run build:static && npm run watch:css & npm run watch:html & npm run watch:js",
+    "watch": "npm run build:static && npm run watch:css & npm run watch:html",
     "watch:html": "chokidar-cmd -c 'npm run build:html' -t app/index.html",
     "watch:css": "chokidar-cmd -c 'npm run build:css' -t app/styles/**/*.less",
-    "watch:js": "webpack --watch"
+    "watch:js": "webpack --watch",
+    "deploy": "npm run build && cd build && echo | surge --domain galaxysynth.com"
   },
   "repository": {
     "type": "git",
